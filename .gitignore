@@ -50,6 +50,9 @@ Temporary Items
 .gradle
 **/build/
 
+# Gradle.properties has signed key info, and we don't want that checked in.
+/fo/android/gradle.properties
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
