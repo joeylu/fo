@@ -1,4 +1,4 @@
-package com.fo;
+package com.halabang.testframe;
 
 import com.facebook.react.ReactActivity;
 

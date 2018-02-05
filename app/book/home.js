@@ -30,7 +30,11 @@ export default class HomePage extends Component {
       title: headerLeft,
       headerRight: (
         <OptionsPopover media={ media } />
-      )
+      ),
+      headerStyle: {
+        backgroundColor: '#f9b300',
+        borderBottomColor: '#ffffff'
+      }
     };
   };
 

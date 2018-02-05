@@ -5,5 +5,8 @@ React Native 框架下的版本，佛经和佛咒目前存在 app/content/data.j
 
 目标是完成安卓和iOS两个平台的app建立，提供无网络下的音频缓存
 
-使用的第三方插件仅两个
-React native navigation 和 React native element
+使用的第三方插件
+React native navigation 
+React native element
+React native sound
+react-native-fetch-blob

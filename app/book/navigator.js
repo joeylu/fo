@@ -9,11 +9,11 @@ export default class NavTabs extends Component {
       animationEnabled: true,
       tabBarOptions: {
         scrollEnabled: true,
-        activeTintColor: '#e91e63',
+        activeTintColor: '#f9b300',
         labelStyle: { fontSize: 16, color: '#ffffff' },
         tabStyle: { height: 56, width: 125 },
         style: {
-          backgroundColor: '#ffcc00',
+          backgroundColor: '#da251c',
         },
       },
     });

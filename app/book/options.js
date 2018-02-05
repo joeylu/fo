@@ -12,18 +12,21 @@ const dirs = RNFetchBlob.fs.dirs;
 Sound.setCategory('Playback');
 //init react native sound
 function initNewSound(){
-  //console.log(JSON.stringify(song));
   if (global.preload.sound == null) {    
+    //console.log(JSON.stringify(global.preload));
     global.preload.sound = new Sound(global.preload.media, dirs.MusicDir + "/fo", (error) => {
+      console.log(error);
       if (error) {
         console.log('failed to load the sound', error);
         return;
-      }
+      } 
       // loaded successfully
       // Loop indefinitely until stop() is called
       //sound.setNumberOfLoops(-1);
-      console.log('duration in seconds: ' + global.preload.sound.getDuration() + 'number of channels: ' + global.preload.sound.getNumberOfChannels());
+      //console.log('duration in seconds: ' + global.preload.sound.getDuration() + 'number of channels: ' + global.preload.sound.getNumberOfChannels());
     });
+  } else {
+    //console.log("not null");
   }
 }
 
@@ -36,7 +39,8 @@ class IconPlayer extends Component {
     }
   }
   playNewSound() { //when new play is pressed
-    //console.log(global.preload.sound.isLoaded());
+    //console.log(JSON.stringify(global.preload));
+    //console.log(global.preload.sound.isLoaded());    
     if (global.preload.sound.isLoaded()) { //make sure the new sound is initiated
       global.song = global.preload;
       global.song.status = 1;
@@ -50,8 +54,8 @@ class IconPlayer extends Component {
           global.song.sound.release();
         }
       }); 
-    } else {
-      alert('无法加载音乐，请尝试重新下载: (10)');
+    } else {      
+      alert('无法加载音乐，如果是第一次下载，请回到主页面再重新点击当前目录: (10)');
     }
   }
   pauseSong(){
@@ -101,7 +105,7 @@ class IconPlayer extends Component {
       )  
     } else if (this.state.sound.status == 2) {    
       return (
-        <ListItem key={0} hideChevron={true} title="继续播放" onPress={() => {return this.playSound();}}
+        <ListItem key={0} hideChevron={true} title="继续播放" onPress={() => {return this.resumeSong();}}
           leftIcon={<Icon name="play-circle-o" style={styles.icons} size={20} ></Icon>} />
       )  
     } else if (this.state.sound.status == 1) {    
@@ -140,11 +144,10 @@ class Download extends Component {
       global.preload.download = 1; global.preload.progress = progressingValue;
       this.props.fileHandler(global.preload);
       //console.log('progress', progressingValue)    
-    }).then((res) => {    
-      global.preload.status = 0; global.preload.download = 2; global.preload.progress = 100;       
-      initSound(); //set song.sound
+    }).then((res) => {
+      global.preload.status = 0; global.preload.download = 2; global.preload.progress = 100; global.preload.sound = null;       
       this.props.fileHandler(global.preload);
-      //console.log('downloaded: ' + JSON.stringify(res));
+      initNewSound(); //set song.sound, hacky for react native sound to initialize the file 
     }).catch((errorMessage, statusCode)=>{     
       global.preload.status = 3; global.preload.download = 0; global.preload.progress = 0;
       this.props.fileHandler(global.preload);

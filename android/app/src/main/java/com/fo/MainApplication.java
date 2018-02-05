@@ -1,4 +1,4 @@
-package com.fo;
+package com.halabang.testframe;
 
 import android.app.Application;
 

@@ -40,7 +40,11 @@ export default class DetailPage extends Component {
 
   static navigationOptions = ({ navigation }) => ({
     title:  navigation.state.params.title,
-    headerRight: <OptionsPopover media={navigation.state.params.media} />
+    headerRight: <OptionsPopover media={navigation.state.params.media} />,    
+    headerStyle: {
+      backgroundColor: '#f9b300',
+      borderBottomColor: '#ffffff'
+    }
   });
   
   render(){
