@@ -1,1 +1,12 @@
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+TO-DO
+
+allow clean download
+allow stop audio at any page
+
+
+android
+expo build:android -t app-bundle
+
+
+ios
+expo build:ios -t archive

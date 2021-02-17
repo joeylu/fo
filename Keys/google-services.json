@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "53082056988",
+    "firebase_url": "https://kew-garden.firebaseio.com",
+    "project_id": "kew-garden",
+    "storage_bucket": "kew-garden.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53082056988:android:6ce0cdc2e10aa5ed",
+        "android_client_info": {
+          "package_name": "com.halabang.kewpm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53082056988-tsduie64t2eav65l1ti3ndp0eau5t920.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcH4xKv5q3NZKRN4Cgvm07lnl8TU9xam4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
