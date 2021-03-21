@@ -1,0 +1,27 @@
+For structure like
+<span>
+rú<br />
+如
+</span>
+
+
+use
+<(br)[^>]*>(?<span>[^<]*)
+to remove <br>
+
+use html minifier to make it one line
+
+use 
+<[^>]*>
+in vscode
+for space replacement
+
+
+redesign the media component, using state instead prop
+get current active tabbar
+determine the media whenever tab active changes
+send media
+
+
+expo build:android -t app-bundle
+expo build:ios -t archive  > vm web server > app upload

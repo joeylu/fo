@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "佛经与佛咒",
+    "slug": "fo",
+    "version": "17.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.halabang.testframe",
+      "permissions": [],
+      "versionCode": 23
+    },
+    "ios": {
+      "bundleIdentifier": "com.halabang.testframe",
+      "buildNumber": "17.2.0",
+      "supportsTablet": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
