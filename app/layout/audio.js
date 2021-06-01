@@ -20,6 +20,7 @@ export default class AudioBtn extends Component {
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false,
+      staysActiveInBackground: true
     });
   }
 
