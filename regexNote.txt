@@ -16,6 +16,8 @@ use
 in vscode
 for space replacement
 
+use $ to replace line end 
+use ^ to replace line start
 
 redesign the media component, using state instead prop
 get current active tabbar

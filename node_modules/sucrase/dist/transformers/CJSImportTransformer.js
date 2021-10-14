@@ -454,7 +454,11 @@ var _Transformer = require('./Transformer'); var _Transformer2 = _interopRequire
     if (
       this.tokens.matches4(_types.TokenType._export, _types.TokenType._default, _types.TokenType._function, _types.TokenType.name) ||
       // export default async function
-      this.tokens.matches5(_types.TokenType._export, _types.TokenType._default, _types.TokenType.name, _types.TokenType._function, _types.TokenType.name)
+      (this.tokens.matches5(_types.TokenType._export, _types.TokenType._default, _types.TokenType.name, _types.TokenType._function, _types.TokenType.name) &&
+        this.tokens.matchesContextualAtIndex(
+          this.tokens.currentIndex() + 2,
+          _keywords.ContextualKeyword._async,
+        ))
     ) {
       this.tokens.removeInitialToken();
       this.tokens.removeToken();

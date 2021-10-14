@@ -10,11 +10,6 @@ import constants from "./app/utilities/constants.json";
 import styles from "./app/content/css/styles";
 import { navigationRef } from './app/utilities/navigator';
 import { Load } from "./app/utilities/storage";
-
-
-import { LogBox, YellowBox } from "react-native";
-//LogBox.ignoreAllLogs(true); //disable warning in simulato
-//YellowBox.ignoreWarnings([""]); 
 ;
 const Stack = createStackNavigator();
 
