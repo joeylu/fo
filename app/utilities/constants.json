@@ -21,7 +21,7 @@
     "settings": {
         "fontSizeName": "fontSize",
         "themeIndexName": "themeIndex",
-        "fontSize": 10,
+        "fontSize": 14,
         "themeIndex": 0
     }
 }

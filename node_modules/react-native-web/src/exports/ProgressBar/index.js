@@ -7,79 +7,64 @@
  * @flow
  */
 
-import applyNativeMethods from '../../modules/applyNativeMethods';
-import ColorPropType from '../ColorPropType';
+import type { ColorValue } from '../../types';
+import type { ViewProps } from '../View';
+
 import StyleSheet from '../StyleSheet';
 import View from '../View';
-import ViewPropTypes from '../ViewPropTypes';
-import React, { Component } from 'react';
-import { bool, number } from 'prop-types';
+import React, { forwardRef, useEffect, useRef } from 'react';
 
-class ProgressBar extends Component<*> {
-  _progressElement: View;
+type ProgressBarProps = {
+  ...ViewProps,
+  color?: ColorValue,
+  indeterminate?: boolean,
+  progress?: number,
+  trackColor?: ColorValue
+};
 
-  static displayName = 'ProgressBar';
+const ProgressBar = forwardRef<ProgressBarProps, *>((props, ref) => {
+  const {
+    color = '#1976D2',
+    indeterminate = false,
+    progress = 0,
+    trackColor = 'transparent',
+    style,
+    ...other
+  } = props;
 
-  static propTypes = {
-    ...ViewPropTypes,
-    color: ColorPropType,
-    indeterminate: bool,
-    progress: number,
-    trackColor: ColorPropType
-  };
+  const percentageProgress = progress * 100;
 
-  static defaultProps = {
-    color: '#1976D2',
-    indeterminate: false,
-    progress: 0,
-    trackColor: 'transparent'
-  };
-
-  componentDidMount() {
-    this._updateProgressWidth();
-  }
-
-  componentDidUpdate() {
-    this._updateProgressWidth();
-  }
-
-  render() {
-    const { color, indeterminate, progress, trackColor, style, ...other } = this.props;
-
-    const percentageProgress = progress * 100;
-
-    return (
-      <View
-        {...other}
-        accessibilityRole="progressbar"
-        aria-valuemax="100"
-        aria-valuemin="0"
-        aria-valuenow={indeterminate ? null : percentageProgress}
-        style={[styles.track, style, { backgroundColor: trackColor }]}
-      >
-        <View
-          ref={this._setProgressRef}
-          style={[styles.progress, indeterminate && styles.animation, { backgroundColor: color }]}
-        />
-      </View>
-    );
-  }
-
-  _setProgressRef = element => {
-    this._progressElement = element;
-  };
-
-  _updateProgressWidth = () => {
-    const { indeterminate, progress } = this.props;
-    const percentageProgress = indeterminate ? 50 : progress * 100;
+  const progressRef = useRef(null);
+  useEffect(() => {
     const width = indeterminate ? '25%' : `${percentageProgress}%`;
-    if (this._progressElement) {
-      this._progressElement.setNativeProps({
+    if (progressRef.current != null) {
+      progressRef.current.setNativeProps({
         style: { width }
       });
     }
-  };
-}
+  }, [indeterminate, percentageProgress, progressRef]);
+
+  return (
+    <View
+      {...other}
+      accessibilityRole="progressbar"
+      accessibilityValue={{
+        max: 100,
+        min: 0,
+        now: indeterminate ? null : percentageProgress
+      }}
+      ref={ref}
+      style={[styles.track, style, { backgroundColor: trackColor }]}
+    >
+      <View
+        ref={progressRef}
+        style={[styles.progress, indeterminate && styles.animation, { backgroundColor: color }]}
+      />
+    </View>
+  );
+});
+
+ProgressBar.displayName = 'ProgressBar';
 
 const styles = StyleSheet.create({
   track: {
@@ -105,4 +90,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default applyNativeMethods(ProgressBar);
+export default ProgressBar;

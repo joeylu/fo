@@ -58,9 +58,15 @@ info ""
 read -n 1
 adb shell am start -n com.facebook.react.uiapp/.RNTesterActivity
 
+
+success "Installing CocoaPods dependencies"
+rm -rf RNTester/Pods
+(cd RNTester && pod install)
+
 info "Press any key to open the workspace in Xcode, then build and test manually."
 info ""
 read -n 1
+
 open "RNTester/RNTesterPods.xcworkspace"
 
 info "When done testing RNTester app on iOS and Android press any key to continue."
@@ -98,7 +104,7 @@ info ""
 info "Press any key to run the sample in Android emulator/device"
 info ""
 read -n 1
-cd "/tmp/${project_name}" && react-native run-android
+cd "/tmp/${project_name}" && npx react-native run-android
 
 info "Test the following on iOS:"
 info "   - Disable Fast Refresh. It might be enabled from last time (the setting is stored on the device)"
@@ -111,7 +117,7 @@ info ""
 info "Press any key to open the project in Xcode"
 info ""
 read -n 1
-open "/tmp/${project_name}/ios/${project_name}.xcodeproj"
+open "/tmp/${project_name}/ios/${project_name}.xcworkspace"
 
 cd "$repo_root"
 

@@ -8,26 +8,31 @@
  * @flow
  */
 
+import type { ComponentType } from 'react';
+
 import AppContainer from './AppContainer';
 import invariant from 'fbjs/lib/invariant';
-import hydrate from '../../modules/hydrate';
-import render from '../render';
+import render, { hydrate } from '../render';
 import styleResolver from '../StyleSheet/styleResolver';
-import React, { type ComponentType } from 'react';
-
-const renderFn = process.env.NODE_ENV !== 'production' ? render : hydrate;
+import React from 'react';
 
 export default function renderApplication<Props: Object>(
   RootComponent: ComponentType<Props>,
-  initialProps: Props,
-  rootTag: any,
   WrapperComponent?: ?ComponentType<*>,
-  callback?: () => void
+  callback?: () => void,
+  options: {
+    hydrate: boolean,
+    initialProps: Props,
+    rootTag: any
+  }
 ) {
+  const { hydrate: shouldHydrate, initialProps, rootTag } = options;
+  const renderFn = shouldHydrate ? hydrate : render;
+
   invariant(rootTag, 'Expect to have a valid rootTag, instead got ', rootTag);
 
   renderFn(
-    <AppContainer WrapperComponent={WrapperComponent} rootTag={rootTag}>
+    <AppContainer rootTag={rootTag} WrapperComponent={WrapperComponent}>
       <RootComponent {...initialProps} />
     </AppContainer>,
     rootTag,
@@ -41,7 +46,7 @@ export function getApplication(
   WrapperComponent?: ?ComponentType<*>
 ): Object {
   const element = (
-    <AppContainer WrapperComponent={WrapperComponent} rootTag={{}}>
+    <AppContainer rootTag={{}} WrapperComponent={WrapperComponent}>
       <RootComponent {...initialProps} />
     </AppContainer>
   );

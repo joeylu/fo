@@ -36,8 +36,13 @@ var propsToAccessibilityComponent = function propsToAccessibilityComponent(props
 
   if (role) {
     if (role === 'heading') {
-      var level = props['aria-level'] || 1;
-      return "h" + level;
+      var level = props['aria-level'];
+
+      if (level != null) {
+        return "h" + level;
+      }
+
+      return 'h1';
     }
 
     return roleComponents[role];

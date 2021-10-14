@@ -79,6 +79,16 @@
         "id": 1013,
         "title": "观世音菩萨普门品",
         "brief": "姚秦三藏法师鸠摩罗什译"
+      },      
+      {
+        "id": 1015,
+        "title": "杂阿含经",
+        "brief": "宋天竺三藏求那跋陀罗译"
+      },        
+      {
+        "id": 1016,
+        "title": "大乘起信论",
+        "brief": "南朝梁真谛译，唐代实叉难陀重译"
       }
     ],
     "page": ""
@@ -117,10 +127,6 @@
         "id": 2017,
         "title": "十小咒",
         "brief": "含十小咒连诵音频"
-      },{
-        "id": 2018,
-        "title": "东方三圣咒",
-        "brief": ""
       }
     ],    
     "page": ""
@@ -191,7 +197,8 @@
       "佛学多媒体资料库(www.buda.idv.tw/)\n",
       "维基百科(www.wikipedia.org)\n",
       "佛教音乐网(http://buddha.goodweb.cn/)\n",
-      "厦门太平岩寺(http://www.taipingyansi.com)"
+      "厦门太平岩寺(http://www.taipingyansi.com)\n",
+      "佛弟子(http://fodizi.com/)"
     ]
   }
 ]

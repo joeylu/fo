@@ -8,13 +8,27 @@
  * @flow
  */
 
+import type { ViewProps } from '../View';
+import type { Node } from 'react';
+
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
-import React from 'react';
 import StyleSheet from '../StyleSheet';
 import View from '../View';
-import { type ViewProps } from '../ViewPropTypes';
+import React, { forwardRef } from 'react';
 
-const SafeAreaView = React.forwardRef<View, ViewProps>((props: ViewProps, ref) => {
+const cssFunction: 'constant' | 'env' = (function() {
+  if (
+    canUseDOM &&
+    window.CSS &&
+    window.CSS.supports &&
+    window.CSS.supports('top: constant(safe-area-inset-top)')
+  ) {
+    return 'constant';
+  }
+  return 'env';
+})();
+
+const SafeAreaView = forwardRef<ViewProps, Node>((props, ref) => {
   const { style, ...rest } = props;
 
   return (
@@ -30,18 +44,6 @@ const SafeAreaView = React.forwardRef<View, ViewProps>((props: ViewProps, ref) =
 });
 
 SafeAreaView.displayName = 'SafeAreaView';
-
-const cssFunction: 'constant' | 'env' = (function() {
-  if (
-    canUseDOM &&
-    window.CSS &&
-    window.CSS.supports &&
-    window.CSS.supports('top: constant(safe-area-inset-top)')
-  ) {
-    return 'constant';
-  }
-  return 'env';
-})();
 
 const styles = StyleSheet.create({
   root: {

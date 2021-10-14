@@ -8,73 +8,72 @@
  * @flow
  */
 
-import applyNativeMethods from '../../modules/applyNativeMethods';
+import type { ViewProps } from '../View';
+
 import StyleSheet from '../StyleSheet';
 import View from '../View';
-import ViewPropTypes from '../ViewPropTypes';
-import { bool, number, oneOf, oneOfType, string } from 'prop-types';
-import React, { Component } from 'react';
+import React, { forwardRef } from 'react';
+
+const accessibilityValue = { max: 1, min: 0 };
 
 const createSvgCircle = style => (
   <circle cx="16" cy="16" fill="none" r="14" strokeWidth="4" style={style} />
 );
 
-class ActivityIndicator extends Component<*> {
-  static displayName = 'ActivityIndicator';
+type ActivityIndicatorProps = {
+  ...ViewProps,
+  animating?: boolean,
+  color?: ?string,
+  hidesWhenStopped?: boolean,
+  size?: 'small' | 'large' | number
+};
 
-  static propTypes = {
-    ...ViewPropTypes,
-    animating: bool,
-    color: string,
-    hidesWhenStopped: bool,
-    size: oneOfType([oneOf(['small', 'large']), number])
-  };
+const ActivityIndicator = forwardRef<ActivityIndicatorProps, *>((props, forwardedRef) => {
+  const {
+    animating = true,
+    color = '#1976D2',
+    hidesWhenStopped = true,
+    size = 'small',
+    style,
+    ...other
+  } = props;
 
-  static defaultProps = {
-    animating: true,
-    color: '#1976D2',
-    hidesWhenStopped: true,
-    size: 'small'
-  };
+  const svg = (
+    <svg height="100%" viewBox="0 0 32 32" width="100%">
+      {createSvgCircle({
+        stroke: color,
+        opacity: 0.2
+      })}
+      {createSvgCircle({
+        stroke: color,
+        strokeDasharray: 80,
+        strokeDashoffset: 60
+      })}
+    </svg>
+  );
 
-  render() {
-    const { animating, color, hidesWhenStopped, size, style, ...other } = this.props;
-
-    const svg = (
-      <svg height="100%" viewBox="0 0 32 32" width="100%">
-        {createSvgCircle({
-          stroke: color,
-          opacity: 0.2
-        })}
-        {createSvgCircle({
-          stroke: color,
-          strokeDasharray: 80,
-          strokeDashoffset: 60
-        })}
-      </svg>
-    );
-
-    return (
+  return (
+    <View
+      {...other}
+      accessibilityRole="progressbar"
+      accessibilityValue={accessibilityValue}
+      ref={forwardedRef}
+      style={[styles.container, style]}
+    >
       <View
-        {...other}
-        accessibilityRole="progressbar"
-        aria-valuemax="1"
-        aria-valuemin="0"
-        style={[styles.container, style]}
-      >
-        <View
-          children={svg}
-          style={[
-            typeof size === 'number' ? { height: size, width: size } : indicatorSizes[size],
-            styles.animation,
-            !animating && styles.animationPause,
-            !animating && hidesWhenStopped && styles.hidesWhenStopped
-          ]}
-        />
-      </View>
-    );
-  }
-}
+        children={svg}
+        style={[
+          typeof size === 'number' ? { height: size, width: size } : indicatorSizes[size],
+          styles.animation,
+          !animating && styles.animationPause,
+          !animating && hidesWhenStopped && styles.hidesWhenStopped
+        ]}
+      />
+    </View>
+  );
+});
+
+ActivityIndicator.displayName = 'ActivityIndicator';
 
 const styles = StyleSheet.create({
   container: {
@@ -111,4 +110,4 @@ const indicatorSizes = StyleSheet.create({
   }
 });
 
-export default applyNativeMethods(ActivityIndicator);
+export default ActivityIndicator;

@@ -52,7 +52,7 @@ const GetList = values => {
     >
       <Icon name='library-books' color="#bbbbbb" style={{padding: 5, paddingRight: 20}} />
       <ListItem.Content>
-          <ListItem.Title style={[appStateContext.settingThemePageFontColor, {fontSize: appStateContext.settingFontSize}]}>{values.item.title}</ListItem.Title>
+          <ListItem.Title style={[appStateContext.settingThemePageFontColor, {fontSize: 20}]}>{values.item.title}</ListItem.Title>
           {values.item.brief ? <ListItem.Subtitle style={appStateContext.settingThemePageFontColor}>{values.item.brief}</ListItem.Subtitle> : null}
       </ListItem.Content>
       <ListItem.Chevron />

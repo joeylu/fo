@@ -10,10 +10,12 @@
 
 'use strict';
 
-import Pressability from '../../Pressability/Pressability.js';
-import {PressabilityDebugView} from '../../Pressability/PressabilityDebug.js';
-import TVTouchable from './TVTouchable.js';
-import typeof TouchableWithoutFeedback from './TouchableWithoutFeedback.js';
+import Pressability, {
+  type PressabilityConfig,
+} from '../../Pressability/Pressability';
+import {PressabilityDebugView} from '../../Pressability/PressabilityDebug';
+import TVTouchable from './TVTouchable';
+import typeof TouchableWithoutFeedback from './TouchableWithoutFeedback';
 import {Commands} from 'react-native/Libraries/Components/View/ViewNativeComponent';
 import ReactNative from 'react-native/Libraries/Renderer/shims/ReactNative';
 import type {PressEvent} from 'react-native/Libraries/Types/CoreEventTypes';
@@ -21,6 +23,7 @@ import Platform from '../../Utilities/Platform';
 import View from '../../Components/View/View';
 import processColor from '../../StyleSheet/processColor';
 import * as React from 'react';
+import invariant from 'invariant';
 
 type Props = $ReadOnly<{|
   ...React.ElementConfig<TouchableWithoutFeedback>,
@@ -37,11 +40,13 @@ type Props = $ReadOnly<{|
         attribute:
           | 'selectableItemBackground'
           | 'selectableItemBackgroundBorderless',
+        rippleRadius: ?number,
       |}>
     | $ReadOnly<{|
         type: 'RippleAndroid',
         color: ?number,
         borderless: boolean,
+        rippleRadius: ?number,
       |}>
   ),
 
@@ -97,24 +102,32 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
    * Creates a value for the `background` prop that uses the Android theme's
    * default background for selectable elements.
    */
-  static SelectableBackground: () => $ReadOnly<{|
+  static SelectableBackground: (
+    rippleRadius: ?number,
+  ) => $ReadOnly<{|
     attribute: 'selectableItemBackground',
     type: 'ThemeAttrAndroid',
-  |}> = () => ({
+    rippleRadius: ?number,
+  |}> = (rippleRadius: ?number) => ({
     type: 'ThemeAttrAndroid',
     attribute: 'selectableItemBackground',
+    rippleRadius,
   });
 
   /**
    * Creates a value for the `background` prop that uses the Android theme's
    * default background for borderless selectable elements. Requires API 21+.
    */
-  static SelectableBackgroundBorderless: () => $ReadOnly<{|
+  static SelectableBackgroundBorderless: (
+    rippleRadius: ?number,
+  ) => $ReadOnly<{|
     attribute: 'selectableItemBackgroundBorderless',
     type: 'ThemeAttrAndroid',
-  |}> = () => ({
+    rippleRadius: ?number,
+  |}> = (rippleRadius: ?number) => ({
     type: 'ThemeAttrAndroid',
     attribute: 'selectableItemBackgroundBorderless',
+    rippleRadius,
   });
 
   /**
@@ -125,15 +138,25 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
   static Ripple: (
     color: string,
     borderless: boolean,
+    rippleRadius: ?number,
   ) => $ReadOnly<{|
     borderless: boolean,
     color: ?number,
+    rippleRadius: ?number,
     type: 'RippleAndroid',
-  |}> = (color: string, borderless: boolean) => ({
-    type: 'RippleAndroid',
-    color: processColor(color),
-    borderless,
-  });
+  |}> = (color: string, borderless: boolean, rippleRadius: ?number) => {
+    const processedColor = processColor(color);
+    invariant(
+      processedColor == null || typeof processedColor === 'number',
+      'Unexpected color given for Ripple color',
+    );
+    return {
+      type: 'RippleAndroid',
+      color: processedColor,
+      borderless,
+      rippleRadius,
+    };
+  };
 
   /**
    * Whether `useForeground` is supported.
@@ -144,31 +167,22 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
   _tvTouchable: ?TVTouchable;
 
   state: State = {
-    pressability: new Pressability({
-      getHitSlop: () => this.props.hitSlop,
-      getLongPressDelayMS: () => {
-        if (this.props.delayLongPress != null) {
-          const maybeNumber = this.props.delayLongPress;
-          if (typeof maybeNumber === 'number') {
-            return maybeNumber;
-          }
-        }
-        return 500;
-      },
-      getPressDelayMS: () => this.props.delayPressIn,
-      getPressOutDelayMS: () => this.props.delayPressOut,
-      getPressRectOffset: () => this.props.pressRetentionOffset,
-      getTouchSoundDisabled: () => this.props.touchSoundDisabled,
-      onLongPress: event => {
-        if (this.props.onLongPress != null) {
-          this.props.onLongPress(event);
-        }
-      },
-      onPress: event => {
-        if (this.props.onPress != null) {
-          this.props.onPress(event);
-        }
-      },
+    pressability: new Pressability(this._createPressabilityConfig()),
+  };
+
+  _createPressabilityConfig(): PressabilityConfig {
+    return {
+      cancelable: !this.props.rejectResponderTermination,
+      disabled: this.props.disabled,
+      hitSlop: this.props.hitSlop,
+      delayLongPress: this.props.delayLongPress,
+      delayPressIn: this.props.delayPressIn,
+      delayPressOut: this.props.delayPressOut,
+      minPressDuration: 0,
+      pressRectOffset: this.props.pressRetentionOffset,
+      android_disableSound: this.props.touchSoundDisabled,
+      onLongPress: this.props.onLongPress,
+      onPress: this.props.onPress,
       onPressIn: event => {
         if (Platform.OS === 'android') {
           this._dispatchPressedStateChange(true);
@@ -191,11 +205,8 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
           this.props.onPressOut(event);
         }
       },
-      onResponderTerminationRequest: () =>
-        !this.props.rejectResponderTermination,
-      onStartShouldSetResponder: () => !this.props.disabled,
-    }),
-  };
+    };
+  }
 
   _dispatchPressedStateChange(pressed: boolean): void {
     if (Platform.OS === 'android') {
@@ -310,6 +321,10 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
         },
       });
     }
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    this.state.pressability.configure(this._createPressabilityConfig());
   }
 
   componentWillUnmount(): void {

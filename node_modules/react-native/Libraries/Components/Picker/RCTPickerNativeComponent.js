@@ -15,6 +15,7 @@ const requireNativeComponent = require('../../ReactNative/requireNativeComponent
 import type {HostComponent} from '../../Renderer/shims/ReactNativeTypes';
 import type {SyntheticEvent} from '../../Types/CoreEventTypes';
 import type {TextStyleProp} from '../../StyleSheet/StyleSheet';
+import type {ProcessedColorValue} from '../../StyleSheet/processColor';
 import codegenNativeCommands from '../../Utilities/codegenNativeCommands';
 import * as React from 'react';
 
@@ -28,7 +29,7 @@ type PickerIOSChangeEvent = SyntheticEvent<
 type RCTPickerIOSItemType = $ReadOnly<{|
   label: ?Label,
   value: ?(number | string),
-  textColor: ?number,
+  textColor: ?ProcessedColorValue,
 |}>;
 
 type Label = Stringish | number;
@@ -39,6 +40,7 @@ type NativeProps = $ReadOnly<{|
   selectedIndex: number,
   style?: ?TextStyleProp,
   testID?: ?string,
+  accessibilityLabel?: ?string,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;

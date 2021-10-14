@@ -12,19 +12,9 @@ function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) r
  * 
  */
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
-import React from 'react';
 import StyleSheet from '../StyleSheet';
 import View from '../View';
-var SafeAreaView = React.forwardRef(function (props, ref) {
-  var style = props.style,
-      rest = _objectWithoutPropertiesLoose(props, ["style"]);
-
-  return React.createElement(View, _extends({}, rest, {
-    ref: ref,
-    style: StyleSheet.compose(styles.root, style)
-  }));
-});
-SafeAreaView.displayName = 'SafeAreaView';
+import React, { forwardRef } from 'react';
 
 var cssFunction = function () {
   if (canUseDOM && window.CSS && window.CSS.supports && window.CSS.supports('top: constant(safe-area-inset-top)')) {
@@ -34,6 +24,16 @@ var cssFunction = function () {
   return 'env';
 }();
 
+var SafeAreaView = forwardRef(function (props, ref) {
+  var style = props.style,
+      rest = _objectWithoutPropertiesLoose(props, ["style"]);
+
+  return React.createElement(View, _extends({}, rest, {
+    ref: ref,
+    style: StyleSheet.compose(styles.root, style)
+  }));
+});
+SafeAreaView.displayName = 'SafeAreaView';
 var styles = StyleSheet.create({
   root: {
     paddingTop: cssFunction + "(safe-area-inset-top)",

@@ -11,10 +11,8 @@ exports.default = void 0;
  *
  * 
  */
-
-/* global HTMLElement */
 var getBoundingClientRect = function getBoundingClientRect(node) {
-  if (node) {
+  if (node != null) {
     var isElement = node.nodeType === 1;
     /* Node.ELEMENT_NODE */
 

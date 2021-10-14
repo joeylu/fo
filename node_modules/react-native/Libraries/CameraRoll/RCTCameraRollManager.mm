@@ -8,7 +8,6 @@
 #import "RCTCameraRollManager.h"
 
 #import <FBReactNativeSpec/FBReactNativeSpec.h>
-#import <CoreLocation/CoreLocation.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
@@ -349,9 +348,12 @@ static void checkPhotoLibraryConfig()
 #endif
 }
 
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModuleWithJsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker
+- (std::shared_ptr<facebook::react::TurboModule>)
+    getTurboModuleWithJsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker
+                  nativeInvoker:(std::shared_ptr<facebook::react::CallInvoker>)nativeInvoker
+                     perfLogger:(id<RCTTurboModulePerformanceLogger>)perfLogger
 {
-  return std::make_shared<facebook::react::NativeCameraRollManagerSpecJSI>(self, jsInvoker);
+  return std::make_shared<facebook::react::NativeCameraRollManagerSpecJSI>(self, jsInvoker, nativeInvoker, perfLogger);
 }
 
 @end

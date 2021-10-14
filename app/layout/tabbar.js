@@ -1,4 +1,5 @@
 import React, { Component, useContext } from "react";
+import { View, ScrollView, Text, StyleSheet } from "react-native";
 import AppContext from "../utilities/context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
@@ -11,7 +12,7 @@ import ContentScreen from "./content";
 const Tab = createMaterialTopTabNavigator();
 export default class TabBar extends Component {
   render() {    
-    console.log("tabbar: " + this.props.article);
+    //console.log("tabbar: " + this.props.article);
     this.list = InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article);
     if (this.list.length > 0) {
       return <TabStyle list = {this.list} props = {this.props} />

@@ -5,6 +5,8 @@ exports.default = void 0;
 
 var _reactDom = require("react-dom");
 
+exports.hydrate = _reactDom.hydrate;
+
 /**
  * Copyright (c) Nicolas Gallagher.
  *
@@ -15,4 +17,3 @@ var _reactDom = require("react-dom");
  */
 var _default = _reactDom.render;
 exports.default = _default;
-module.exports = exports.default;

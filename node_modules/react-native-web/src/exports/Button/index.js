@@ -8,44 +8,43 @@
  * @flow
  */
 
-import ColorPropType from '../ColorPropType';
+import * as React from 'react';
 import StyleSheet from '../StyleSheet';
 import TouchableOpacity from '../TouchableOpacity';
 import Text from '../Text';
-import { bool, func, string } from 'prop-types';
-import React, { Component } from 'react';
 
-class Button extends Component<*> {
-  static propTypes = {
-    accessibilityLabel: string,
-    color: ColorPropType,
-    disabled: bool,
-    onPress: func.isRequired,
-    testID: string,
-    title: string.isRequired
-  };
+type ButtonProps = {|
+  accessibilityLabel?: ?string,
+  color?: ?string,
+  disabled?: boolean,
+  onPress?: ?(e: any) => void,
+  testID?: ?string,
+  title: string
+|};
 
-  render() {
-    const { accessibilityLabel, color, disabled, onPress, testID, title } = this.props;
+const Button = React.forwardRef<ButtonProps, *>((props, forwardedRef) => {
+  const { accessibilityLabel, color, disabled, onPress, testID, title } = props;
 
-    return (
-      <TouchableOpacity
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        disabled={disabled}
-        onPress={onPress}
-        style={[
-          styles.button,
-          color && { backgroundColor: color },
-          disabled && styles.buttonDisabled
-        ]}
-        testID={testID}
-      >
-        <Text style={[styles.text, disabled && styles.textDisabled]}>{title}</Text>
-      </TouchableOpacity>
-    );
-  }
-}
+  return (
+    <TouchableOpacity
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}
+      ref={forwardedRef}
+      style={[
+        styles.button,
+        color && { backgroundColor: color },
+        disabled && styles.buttonDisabled
+      ]}
+      testID={testID}
+    >
+      <Text style={[styles.text, disabled && styles.textDisabled]}>{title}</Text>
+    </TouchableOpacity>
+  );
+});
+
+Button.displayName = 'Button';
 
 const styles = StyleSheet.create({
   button: {
@@ -66,5 +65,7 @@ const styles = StyleSheet.create({
     color: '#a1a1a1'
   }
 });
+
+export type { ButtonProps };
 
 export default Button;

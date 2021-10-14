@@ -95,9 +95,7 @@ var UIManager = {
   measureLayout: function measureLayout(node, relativeToNativeNode, onFail, onSuccess) {
     _measureLayout(node, relativeToNativeNode, onSuccess);
   },
-  updateView: function updateView(node, props, component
-  /* only needed to surpress React errors in development */
-  ) {
+  updateView: function updateView(node, props) {
     for (var prop in props) {
       if (!Object.prototype.hasOwnProperty.call(props, prop)) {
         continue;
@@ -108,7 +106,7 @@ var UIManager = {
       switch (prop) {
         case 'style':
           {
-            setValueForStyles(node, value, component._reactInternalInstance);
+            setValueForStyles(node, value);
             break;
           }
 

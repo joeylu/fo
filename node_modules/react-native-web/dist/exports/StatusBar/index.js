@@ -1,5 +1,3 @@
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
 /**
  * Copyright (c) Nicolas Gallagher.
  *
@@ -8,34 +6,15 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
  *
  * 
  */
-import { Component } from 'react';
+var emptyFunction = function emptyFunction() {};
 
-var StatusBar =
-/*#__PURE__*/
-function (_Component) {
-  _inheritsLoose(StatusBar, _Component);
+function StatusBar() {
+  return null;
+}
 
-  function StatusBar() {
-    return _Component.apply(this, arguments) || this;
-  }
-
-  StatusBar.setBackgroundColor = function setBackgroundColor() {};
-
-  StatusBar.setBarStyle = function setBarStyle() {};
-
-  StatusBar.setHidden = function setHidden() {};
-
-  StatusBar.setNetworkActivityIndicatorVisible = function setNetworkActivityIndicatorVisible() {};
-
-  StatusBar.setTranslucent = function setTranslucent() {};
-
-  var _proto = StatusBar.prototype;
-
-  _proto.render = function render() {
-    return null;
-  };
-
-  return StatusBar;
-}(Component);
-
-export { StatusBar as default };
+StatusBar.setBackgroundColor = emptyFunction;
+StatusBar.setBarStyle = emptyFunction;
+StatusBar.setHidden = emptyFunction;
+StatusBar.setNetworkActivityIndicatorVisible = emptyFunction;
+StatusBar.setTranslucent = emptyFunction;
+export default StatusBar;

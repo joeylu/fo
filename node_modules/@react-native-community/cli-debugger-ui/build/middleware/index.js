@@ -28,7 +28,9 @@ function _path() {
 }
 
 function debuggerUIMiddleware() {
-  return (0, _serveStatic().default)(_path().default.join(__dirname, '..', 'ui'));
+  return (0, _serveStatic().default)(_path().default.join(__dirname, '..', 'ui'), {
+    cacheControl: false
+  });
 }
 
 //# sourceMappingURL=index.js.map

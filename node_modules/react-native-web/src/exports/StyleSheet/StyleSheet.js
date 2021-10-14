@@ -7,7 +7,7 @@
  * @flow
  */
 
-import ReactNativePropRegistry from '../../modules/ReactNativePropRegistry';
+import ReactNativePropRegistry from './ReactNativePropRegistry';
 import flattenStyle from './flattenStyle';
 
 const absoluteFillObject = {
@@ -57,6 +57,9 @@ const StyleSheet = {
     return result;
   },
   flatten: flattenStyle,
+
+  // `hairlineWidth` is not implemented using screen density as browsers may
+  // round sub-pixel values down to `0`, causing the line not to be rendered.
   hairlineWidth: 1
 };
 

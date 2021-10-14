@@ -19,22 +19,34 @@ NSString *const RCTAppearanceColorSchemeLight = @"light";
 NSString *const RCTAppearanceColorSchemeDark = @"dark";
 
 static BOOL sAppearancePreferenceEnabled = YES;
-void RCTEnableAppearancePreference(BOOL enabled) {
+void RCTEnableAppearancePreference(BOOL enabled)
+{
   sAppearancePreferenceEnabled = enabled;
+}
+
+static NSString *sColorSchemeOverride = nil;
+void RCTOverrideAppearancePreference(NSString *const colorSchemeOverride)
+{
+  sColorSchemeOverride = colorSchemeOverride;
 }
 
 static NSString *RCTColorSchemePreference(UITraitCollection *traitCollection)
 {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     static NSDictionary *appearances;
     static dispatch_once_t onceToken;
 
+    if (sColorSchemeOverride) {
+      return sColorSchemeOverride;
+    }
+
     dispatch_once(&onceToken, ^{
       appearances = @{
-                      @(UIUserInterfaceStyleLight): RCTAppearanceColorSchemeLight,
-                      @(UIUserInterfaceStyleDark): RCTAppearanceColorSchemeDark
-                      };
+        @(UIUserInterfaceStyleLight) : RCTAppearanceColorSchemeLight,
+        @(UIUserInterfaceStyleDark) : RCTAppearanceColorSchemeDark
+      };
     });
 
     if (!sAppearancePreferenceEnabled) {
@@ -54,8 +66,7 @@ static NSString *RCTColorSchemePreference(UITraitCollection *traitCollection)
 @interface RCTAppearance () <NativeAppearanceSpec>
 @end
 
-@implementation RCTAppearance
-{
+@implementation RCTAppearance {
   NSString *_currentColorScheme;
 }
 
@@ -72,13 +83,15 @@ RCT_EXPORT_MODULE(Appearance)
 }
 
 - (std::shared_ptr<TurboModule>)getTurboModuleWithJsInvoker:(std::shared_ptr<CallInvoker>)jsInvoker
+                                              nativeInvoker:(std::shared_ptr<CallInvoker>)nativeInvoker
+                                                 perfLogger:(id<RCTTurboModulePerformanceLogger>)perfLogger
 {
-  return std::make_shared<NativeAppearanceSpecJSI>(self, jsInvoker);
+  return std::make_shared<NativeAppearanceSpecJSI>(self, jsInvoker, nativeInvoker, perfLogger);
 }
 
 RCT_EXPORT_SYNCHRONOUS_TYPED_METHOD(NSString *, getColorScheme)
 {
-  _currentColorScheme =  RCTColorSchemePreference(nil);
+  _currentColorScheme = RCTColorSchemePreference(nil);
   return _currentColorScheme;
 }
 
@@ -92,7 +105,7 @@ RCT_EXPORT_SYNCHRONOUS_TYPED_METHOD(NSString *, getColorScheme)
   NSString *newColorScheme = RCTColorSchemePreference(traitCollection);
   if (![_currentColorScheme isEqualToString:newColorScheme]) {
     _currentColorScheme = newColorScheme;
-    [self sendEventWithName:@"appearanceChanged" body:@{@"colorScheme": newColorScheme}];
+    [self sendEventWithName:@"appearanceChanged" body:@{@"colorScheme" : newColorScheme}];
   }
 }
 
@@ -100,7 +113,7 @@ RCT_EXPORT_SYNCHRONOUS_TYPED_METHOD(NSString *, getColorScheme)
 
 - (NSArray<NSString *> *)supportedEvents
 {
-  return @[@"appearanceChanged"];
+  return @[ @"appearanceChanged" ];
 }
 
 - (void)startObserving
@@ -122,6 +135,7 @@ RCT_EXPORT_SYNCHRONOUS_TYPED_METHOD(NSString *, getColorScheme)
 
 @end
 
-Class RCTAppearanceCls(void) {
+Class RCTAppearanceCls(void)
+{
   return RCTAppearance.class;
 }

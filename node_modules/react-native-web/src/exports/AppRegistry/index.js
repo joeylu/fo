@@ -8,10 +8,11 @@
  * @flow
  */
 
+import type { ComponentType } from 'react';
+
 import invariant from 'fbjs/lib/invariant';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 import renderApplication, { getApplication } from './renderApplication';
-import type { ComponentType } from 'react';
 
 const emptyObject = {};
 const runnables = {};
@@ -63,10 +64,13 @@ export default class AppRegistry {
       run: appParameters =>
         renderApplication(
           componentProviderInstrumentationHook(componentProvider),
-          appParameters.initialProps || emptyObject,
-          appParameters.rootTag,
           wrapperComponentProvider && wrapperComponentProvider(appParameters),
-          appParameters.callback
+          appParameters.callback,
+          {
+            hydrate: appParameters.hydrate || false,
+            initialProps: appParameters.initialProps || emptyObject,
+            rootTag: appParameters.rootTag
+          }
         )
     };
     return appKey;

@@ -70,6 +70,11 @@ RCT_EXPORT_SHADOW_PROPERTY(text, NSString)
 RCT_EXPORT_SHADOW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_SHADOW_PROPERTY(onContentSizeChange, RCTBubblingEventBlock)
 
+RCT_CUSTOM_VIEW_PROPERTY(multiline, BOOL, UIView)
+{
+  // No op.
+  // This View Manager doesn't use this prop but it must be exposed here via ViewConfig to enable Fabric component use it.
+}
 
 - (RCTShadowView *)shadowView
 {
@@ -94,6 +99,45 @@ RCT_EXPORT_SHADOW_PROPERTY(onContentSizeChange, RCTBubblingEventBlock)
                                                name:@"RCTAccessibilityManagerDidUpdateMultiplierNotification"
                                              object:[bridge moduleForName:@"AccessibilityManager"
                                                     lazilyLoadIfNecessary:YES]];
+}
+
+RCT_EXPORT_METHOD(focus : (nonnull NSNumber *)viewTag)
+{
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    UIView *view = viewRegistry[viewTag];
+    [view reactFocus];
+  }];
+}
+
+RCT_EXPORT_METHOD(blur : (nonnull NSNumber *)viewTag)
+{
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    UIView *view = viewRegistry[viewTag];
+    [view reactBlur];
+  }];
+}
+
+RCT_EXPORT_METHOD(setTextAndSelection : (nonnull NSNumber *)viewTag
+                 mostRecentEventCount : (NSInteger)mostRecentEventCount
+                                value : (NSString *)value
+                                start : (NSInteger)start
+                                  end : (NSInteger)end)
+{
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+    RCTBaseTextInputView *view = (RCTBaseTextInputView *)viewRegistry[viewTag];
+    NSInteger eventLag = view.nativeEventCount - mostRecentEventCount;
+    if (eventLag != 0) {
+      return;
+    }
+    RCTExecuteOnUIManagerQueue(^{
+      RCTBaseTextInputShadowView *shadowView = (RCTBaseTextInputShadowView *)[self.bridge.uiManager shadowViewForReactTag:viewTag];
+      [shadowView setText:value];
+      [self.bridge.uiManager setNeedsLayout];
+      RCTExecuteOnMainQueue(^{
+        [view setSelectionStart:start selectionEnd:end];
+      });
+    });
+  }];
 }
 
 #pragma mark - RCTUIManagerObserver

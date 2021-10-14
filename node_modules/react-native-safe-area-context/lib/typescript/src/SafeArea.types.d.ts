@@ -27,5 +27,5 @@ export interface NativeSafeAreaProviderProps {
 export declare type NativeSafeAreaViewProps = ViewProps & {
     children?: React.ReactNode;
     mode?: 'padding' | 'margin';
-    edges?: readonly Edge[];
+    edges?: ReadonlyArray<Edge>;
 };

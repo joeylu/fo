@@ -8,17 +8,14 @@
  */
 
 import View from '../../exports/View';
-import React, { Component } from 'react';
+import React from 'react';
 
 /**
  * Common implementation for a simple stubbed view.
  */
-/* eslint-disable react/prop-types */
-class UnimplementedView extends Component<*, *> {
+class UnimplementedView extends React.Component<*, *> {
   setNativeProps() {
     // Do nothing.
-    // This method is required in order to use this view as a Touchable* child.
-    // See ensureComponentIsNative.js for more info
   }
 
   render() {

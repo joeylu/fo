@@ -6,5 +6,6 @@
  *
  * 
  */
-import { render } from 'react-dom';
+import { hydrate, render } from 'react-dom';
+export { hydrate };
 export default render;
