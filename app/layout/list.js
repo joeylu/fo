@@ -27,6 +27,7 @@ const GetList = values => {
       bottomDivider       
       onPress={()=>{      
         if (typeof values.item.targetID === "undefined") {
+          //console.log("list: " + values.props.book);
           /*
             1. a unknown list is provide from content.js, list name is "source"
             2. when book id is not provided, this list is a foMenu root sections
@@ -34,16 +35,16 @@ const GetList = values => {
             4. when a section id is provided, this list is a book>section>articles
           */        
             values.props.navigation.push("Page", {
-              menu: values.props.menu, 
+              menu: values.props.menu,
               book: values.props.book == 0 ? values.item.id : values.props.book, //update book id
               section: values.props.section, //inherit section id
-              article: values.props.section > 0 ? values.item.id : -1 //update article id
+              article: values.props.section > 0 ? values.item.id : -1, //update article id
             }); 
         } else {
           //redirect to a target book with given target book ID
           values.props.navigation.push("Page", {
             menu: values.props.menu,
-            book: values.item.targetID,
+            book: values.item.targetID, //set target content
             section: 0,
             article: -1
           });

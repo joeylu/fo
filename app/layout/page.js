@@ -19,7 +19,6 @@ export default class HomePage extends Component {
       article: 0,
       home: true,
     };
-
   }
   componentDidMount() {
     //set default, article is an index number to a book > section > list index
@@ -63,6 +62,7 @@ export default class HomePage extends Component {
         });
       } else {
         //display book download/media button
+        //console.log("media: " + headerMedia);
         this.props.navigation.setOptions({
           headerBackTitle: "",
           headerTitle: props => <Header {...props} title={headerTItle} />,
@@ -91,7 +91,7 @@ export default class HomePage extends Component {
   }
 
   render() {
-    //return <View></View>
+    //console.log("page: " + this.state.book);
     return <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} />;
   }
 }

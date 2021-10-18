@@ -8,16 +8,24 @@ import Detail from "./detail";
 import foData from "../content/data.json";
 import foMenu from "../content/menu.json";
 
-export default class Content extends Component {    
-  render(){    
-    //set default content
+export default class Content extends Component {
+  render() {
+    //set default content, only listed level 1 objects, performance safe
     let content = foMenu.find(item => item.id == this.props.menu);
     //console.log("content: " + this.props.menu + "," + this.props.book + "," + this.props.section + "," + this.props.article);
     //set book content by section id
     if (this.props.menu > 0 && this.props.book > 0) {
       const book = foData.find(item => item.id == this.props.book);
-      const bookSection = book.sections.find(s => s.id == this.props.section)
-      if(this.props.article < 0){
+      let bookSection = book.sections.find(s => s.id == this.props.section);
+      //remove text from list pages to save performance since this screen will be refreshed multiple times
+      // if (bookSection.list.length > 0) {
+      //   bookSection.list = bookSection.list.map(v => {
+      //     v.page = [];
+      //     return v;
+      //   });
+      // }
+
+      if (this.props.article < 0) {
         //if article is not provided, get section content
         if (bookSection) content = bookSection;
       } else {
@@ -33,16 +41,17 @@ export default class Content extends Component {
     this.image = typeof content.image === "undefined" ? "" : content.image;
     this.media = typeof content.media === "undefined" ? "" : content.media;
     this.urls = typeof content.urls === "undefined" ? [] : content.urls;
-    //console.log("content validation: " + this.list.length + ", " + typeof this.page + ", " + this.urls.length)  
+    //console.log("content validation: " + this.list.length + ", " + typeof this.page + ", " + this.urls.length)
 
     if (this.urls.length > 0) {
-      return <GetBook urls = {this.urls} props = {this.props} />
+      //return a list of a book collections
+      return <GetBook urls={this.urls} props={this.props} />;
     }
     if (this.list.length == 0) {
       //return page content
-      return <GetBasic page = {this.page} image = {this.image} section={this.props.section} />
-    }  else {
-      return <GetList list = {this.list} props = {this.props} />
+      return <GetBasic page={this.page} image={this.image} section={this.props.section} />;
+    } else {
+      return <GetList list={this.list} props={this.props} />;
     }
   }
 }

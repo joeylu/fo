@@ -16,10 +16,10 @@ const Stack = createStackNavigator();
 function App() {
   // Define as many global variables as your app needs, and hooks to set the state of the variable.
   // For each global variable, define a function for updating it. In the case of download_progress, we’ll just use set_download_progress.
-  // useState usage: const [var, set action] = useState("initialValue")  
+  // useState usage: const [var, set action] = useState("initialValue")
   const [download_title, set_download_title] = useState(constants.downloadTitle);
   const [download_media, set_download_media] = useState(constants.downloadMedia);
-  const [download_progress, set_download_progress] = useState(0.00);
+  const [download_progress, set_download_progress] = useState(0.0);
   const [download_status, set_download_status] = useState(constants.downloadStatus.notStarted);
   const [audio_playing_title, set_audio_playing_title] = useState("");
   const [audio_playing_media, set_audio_playing_media] = useState("");
@@ -61,7 +61,7 @@ function App() {
     set_theme_page_background_color,
     set_theme_page_font_color,
     set_theme_header_background_color,
-    set_theme_tab_background_color
+    set_theme_tab_background_color,
   };
   return (
     <AppContext.Provider value={appState}>
