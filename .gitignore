@@ -12,5 +12,5 @@
 !yarn-error.log
 !yarn.lock
 
-!app/*
-!assets/*
+!app/
+!assets/
