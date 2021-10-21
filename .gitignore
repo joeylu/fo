@@ -1,5 +1,7 @@
-# ignore these
-*
+# ignore root files
+/*  
+# ignore root folders
+/*/
 
 # But not these files...
 !.gitignore
@@ -12,5 +14,6 @@
 !yarn-error.log
 !yarn.lock
 
-!app/
-!assets/
+# But not these folders
+!/app/
+!/assets/
