@@ -61,6 +61,9 @@ const images = {
   Cundi: require("../content/images/cundi.jpg"),
   Yaoshi: require("../content/images/yaoshirulai_zhoulun.jpg"),
   Green: require("../content/images/green.jpg"),
+  Dizang: require("../content/images/dizang.jpg"),
+  DLJG: require("../content/images/dljg.jpg"),
+  DLJG_Print: require("../content/images/dljg_print.jpg"),
 };
 const styles = StyleSheet.create({
   imageHolder: {
