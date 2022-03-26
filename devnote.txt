@@ -1,14 +1,2 @@
-to clean up previous git chached after new ignore
-
-# Remove the files from the index (not the actual files in the working copy)
-$ git rm -r --cached .
-
-# Add these removals to the Staging Area...
-$ git add .
-
-# ...and commit them!
-$ git commit -m "Clean up ignored files"
-
-
 for tracking routers and screen focues states
 https://reactnavigation.org/docs/use-navigation-state/
