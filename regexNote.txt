@@ -30,3 +30,4 @@ in sub chapters, hit play will fast forward /rewind to the exact position in aud
 
 expo build:android -t app-bundle
 expo build:ios -t archive  > vm web server > app upload
+好的，下个版本我会尝试增加行距的功能

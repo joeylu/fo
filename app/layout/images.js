@@ -68,6 +68,7 @@ const images = {
   WENSHU_SIGN: require("../content/images/wenshu.jpg"),
   WENSHU_SIGN: require("../content/images/wenshu.jpg"),
   BUDONGFO_MANTRA: require("../content/images/budongfo_mantra.jpg"),
+  Three: require("../content/images/three.jpg"),
 };
 const styles = StyleSheet.create({
   imageHolder: {
