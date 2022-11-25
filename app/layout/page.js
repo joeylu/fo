@@ -29,9 +29,9 @@ export default class HomePage extends Component {
       let headerTItle = constants.appTitle;
       let headerMedia = "";
       //get params
+      //console.log("page: " + this.props.route.params);
       if (this.props.route.params && typeof this.props.route.params.book !== "undefined") {
         const book = foData.find(item => item.id == this.props.route.params.book);
-        //console.log("page: " + this.props.route.params.book);
         headerTItle = book.title;
         headerMedia = book.media;
         if (this.props.route.params.article >= 0 && this.props.route.params.section >= 0) {
@@ -51,7 +51,7 @@ export default class HomePage extends Component {
         this.article = this.props.route.params.article;
         this.home = false;
       }
-
+      //console.log("page home check: " + this.home);
       //setting header
       if (this.home) {
         //it's home page, display setting button
@@ -92,6 +92,8 @@ export default class HomePage extends Component {
 
   render() {
     //console.log("page: " + this.state.book);
-    return <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} />;
+    return ( 
+      <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} />
+    );
   }
 }

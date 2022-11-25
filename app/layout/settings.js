@@ -37,6 +37,23 @@ const SettingContent = props => {
             }
         });
     }
+
+    const SetLine = (lineHeight) => {    
+        if (!lineHeight) { 
+            lineHeight = constants.settings.lineHeight; 
+        } else {
+            if (lineHeight.toString() === appStateContext.settingLineHeight.toString()) return; 
+        }
+        Save(constants.settings.lineHeightName, lineHeight).then(result => {
+            try {
+                lineHeight = Number(lineHeight);
+                appStateContext.set_line_height(lineHeight)
+            } catch(e) {
+                console.log(e);
+            }
+        });
+    }
+
     const SetTheme = (themeIndex) => {     
         if (!themeIndex) {            
             themeIndex = constants.settings.themeIndex; 
@@ -95,6 +112,13 @@ const SettingContent = props => {
             SetSlider(constants.settings.fontSize); 
         })
 
+    Load(constants.settings.lineHeightName)
+        .then(result => SetLine(result))
+        .catch(error => {   
+            console.log("error caught line height");         
+            SetLine(constants.settings.lineHeight); 
+        })
+
     Load(constants.settings.themeIndexName)
         .then(result => SetTheme(result))
         .catch(error => {            
@@ -105,7 +129,7 @@ const SettingContent = props => {
 
     return (
         <View style={[styles.pageBody, appStateContext.settingThemePageBackgroundColor]}>
-            <ScrollView contentContainerStyle={styles.contentPage}>    
+            <ScrollView contentContainerStyle={styles.contentPage}>
                 <View style={styles.contentRow}>
                     <Text style={[{fontSize: appStateContext.settingFontSize}, appStateContext.settingThemePageFontColor]}>字体尺寸：{appStateContext.settingFontSize}</Text>
                 </View>  
@@ -119,7 +143,22 @@ const SettingContent = props => {
                         step={1}
                         onSlidingComplete={value => SetSlider(value)}
                     />
-                </View>               
+                </View>  
+                <Divider style={styles.divider} />
+                <View style={styles.contentRow}>
+                    <Text style={[{fontSize: appStateContext.settingFontSize}, appStateContext.settingThemePageFontColor]}>段落行距：{appStateContext.settingLineHeight}</Text>
+                </View>  
+                <View style={styles.contentCenterView}>   
+                    <Slider
+                        value={appStateContext.settingLineHeight}
+                        style={styles.settingSlider}
+                        minimumValue={24}
+                        maximumValue={48}                            
+                        thumbTintColor={constants.defaultColor2}
+                        step={1}
+                        onSlidingComplete={value => SetLine(value)}
+                    />
+                </View>     
                 <Divider style={styles.divider} />
                 <View>                    
                     <View style={styles.contentRow}>

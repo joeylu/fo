@@ -20,8 +20,10 @@
     },
     "settings": {
         "fontSizeName": "fontSize",
+        "lineHeightName": "lineHeight",
         "themeIndexName": "themeIndex",
         "fontSize": 14,
+        "lineHeight": 28,
         "themeIndex": 0
     }
 }

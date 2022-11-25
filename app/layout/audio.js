@@ -38,39 +38,64 @@ export default class AudioBtn extends Component {
 const GetAudioBtn = (props) => {
   const appStateContext = useContext(AppContext);
 
+  const onPlaybackStatusUpdate = (status) => {
+    //console.log(status.durationMillis + " / " + status.positionMillis + " = " + (status.positionMillis/status.durationMillis*100));
+    appStateContext.set_audio_playing_duration(status.durationMillis)
+    appStateContext.set_audio_playback_update(
+      (status.positionMillis/status.durationMillis) * 100
+    );
+  }
+
   const playAudioHandler = async () => {
-    try {
+    try {      
+      //console.log("playAudioHandler " + appStateContext.audioPlayingMedia + " : " + props.media + " status is " + appStateContext.audioPlayingStatus);
+      //check if the current playing media equals to the target media
       if (appStateContext.audioPlayingMedia === props.media) {
         //load the audio if it's not yet loaded
         if (
-          appStateContext.audioPlayingStatus === constants.audioStatus.unloaded
+          appStateContext.audioPlayingStatus === constants.audioStatus.unloaded ||
+          appStateContext.audioPlayingStatus === constants.audioStatus.stopped
         ) {
-          await _loadNewAudio(props.media);
-        }
-        //determine the button actio by playback status
-        if (
-          appStateContext.audioPlayingStatus === constants.audioStatus.playing
-        ) {
-          await _pauseAudio();
+          await _loadNewAudio(props.media, props.title);
         } else {
+          //determine the button actio by playback that is already loaded
           if (
-            appStateContext.audioPlayingStatus === constants.audioStatus.resume
+            appStateContext.audioPlayingStatus === constants.audioStatus.playing
           ) {
+            //console.log("playAudioHandler.pauseAudio " + appStateContext.audioPlayingTitle + " : " + props.media + " : " + props.title);
+            await _pauseAudio();
+          } 
+          if (
+            appStateContext.audioPlayingStatus === constants.audioStatus.paused
+          ) {
+            //console.log("playAudioHandler.resumeAudio " + appStateContext.audioPlayingTitle + " : " + props.media + " : " + props.title);
             await _resumeAudio();
-          } else {
-            await _loadNewAudio(props.media);
           }
         }
-      } else {
+      } else { //when current playing media is not target media
+        console.log("target media check: " + appStateContext.audioPlayingStatus);
         if (
           appStateContext.audioPlayingStatus === constants.audioStatus.playing
-        ) {
+        ) {       
           Alert.alert(
             "中断播放",
-            "正在播放 " + props.title + ", 是否中断当前播放"
+            "正在播放:" + appStateContext.audioPlayingTitle + ",是否中断当前播放",
+            [
+              {
+                text: "取消",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel",
+              },
+              {
+                text: "确认",
+                onPress: () => _unloadAudio(),
+              },
+            ],
+            { cancelable: true }
           );
-        } else {
-          await _loadNewAudio(props.media);
+        } else {          
+          //if nothing is currently playing, load the target media
+          await _loadNewAudio(props.media, props.title);
         }
       }
     } catch (e) {
@@ -78,11 +103,12 @@ const GetAudioBtn = (props) => {
       Alert.alert("加载出错", "无法加载新音频，请尝试推出当前页面或重启APP");
     }
   };
-  const _loadNewAudio = async (media) => {
+  const _loadNewAudio = async (media, title) => {
     try {
       //loading new sound
       const source = { uri: mp3Folder + media };
       const newPlayback = new Audio.Sound();
+      newPlayback.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
       //set loading initial status
       const initialStatus = {
         shouldPlay: true,
@@ -91,17 +117,19 @@ const GetAudioBtn = (props) => {
         volume: 1.0,
         isMuted: false,
       };
-      appStateContext.set_audio_playing_media(media);
 
       await newPlayback
         .loadAsync(source, initialStatus, false)
         .then((playbackStatus) => {
           newPlayback.setIsLoopingAsync(true);
           appStateContext.set_audio_player_instance(newPlayback);
+          appStateContext.set_audio_playing_media(media);
+          appStateContext.set_audio_playing_title(title);
           appStateContext.set_audio_playing_status(
             constants.audioStatus.playing
           ); //since it's a local file and shouldPlay is true, should play the audio immediately instead buffering
-          console.log("loading finished: " + JSON.stringify(playbackStatus));
+          //console.log("_loadNewAudio " + title + " > " + appStateContext.audioPlayingTitle);
+          //console.log("loading finished: " + JSON.stringify(playbackStatus));
         })
         .catch((error) => {
           console.log("loading audio error: " + error);
@@ -160,7 +188,8 @@ const GetAudioBtn = (props) => {
       await currentPlayback
         .unloadAsync()
         .then(() => {
-          appStateContext.set_audio_player_instance(currentPlayback);
+          appStateContext.set_audio_player_instance(null);          
+          appStateContext.set_audio_playing_title('');
           appStateContext.set_audio_playing_status(
             constants.audioStatus.unloaded
           );
@@ -178,10 +207,10 @@ const GetAudioBtn = (props) => {
 
   /*
     check this audio media existence, if not, no show
-    otherwise, if downloading is currently started, make sure the current download media is not current audio, if matches, no show
-    
+    otherwise, if downloading is currently started, make sure the current download media is not current audio, if matches, no show    
   */
-  if (props.exist === true) {
+  //console.log(props.exist);
+  if (props.exist === true) {    
     if (appStateContext.downloadStatus !== constants.downloadStatus.notStarted && appStateContext.downloadMedia === props.media) {
       return <Text />
     } else {
@@ -196,7 +225,7 @@ const GetAudioBtn = (props) => {
             ) {
               Alert.alert(
                 "终止播放",
-                "正在播放音频" + props.title + "，是否要终止当前播放？",
+                "正在播放:" + appStateContext.audioPlayingTitle + "，是否要终止当前播放？",
                 [
                   {
                     text: "取消",

@@ -122,5 +122,11 @@ export default StyleSheet.create({
   },
   tabBgBook: {
     backgroundColor: '#b32400',
-  }
+  },
+  audioBarBody: {
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingTop: 10,
+    paddingBottom: 10
+  },
 });

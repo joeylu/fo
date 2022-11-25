@@ -23,10 +23,13 @@ function App() {
   const [download_status, set_download_status] = useState(constants.downloadStatus.notStarted);
   const [audio_playing_title, set_audio_playing_title] = useState("");
   const [audio_playing_media, set_audio_playing_media] = useState("");
+  const [audio_playing_duration, set_audio_playing_duration] = useState(0.0);
   const [audio_playing_status, set_audio_playing_status] = useState(constants.audioStatus.unloaded);
   const [audio_player_instance, set_audio_player_instance] = useState(null);
+  const [audio_playback_update, set_audio_playback_update] = useState(null);
   //app settings
   const [setting_font_size, set_font_size] = useState(constants.settings.fontSize);
+  const [setting_line_height, set_line_height] = useState(constants.settings.lineHeight);
   const [setting_theme, set_theme] = useState(constants.settings.themeIndex);
   const [setting_theme_page_background_color, set_theme_page_background_color] = useState(styles.pageBodyLight);
   const [setting_theme_page_font_color, set_theme_page_font_color] = useState(styles.pageFontLight);
@@ -37,26 +40,32 @@ function App() {
     downloadMedia: download_media,
     downloadProgress: download_progress,
     downloadStatus: download_status,
-    audio_playing_title: audio_playing_title,
+    audioPlayingTitle: audio_playing_title,
     audioPlayingMedia: audio_playing_media,
+    audioPlayingDuration: audio_playing_duration,
     audioPlayingStatus: audio_playing_status,
     audioPlayerInstance: audio_player_instance,
+    audioPlaybackUpdate: audio_playback_update,
     set_download_title,
     set_download_progress,
     set_download_status,
     set_download_media,
     set_audio_playing_title,
     set_audio_playing_media,
+    set_audio_playing_duration,
     set_audio_playing_status,
     set_audio_player_instance,
+    set_audio_playback_update,
     //settings
     settingFontSize: setting_font_size,
+    settingLineHeight: setting_line_height,
     settingTheme: setting_theme,
     settingThemePageBackgroundColor: setting_theme_page_background_color,
     settingThemePageFontColor: setting_theme_page_font_color,
     settingThemeHeaderBackgroundColor: setting_theme_header_background_color,
     settingThemeTabBackgroundColor: setting_theme_tab_background_color,
     set_font_size,
+    set_line_height,
     set_theme,
     set_theme_page_background_color,
     set_theme_page_font_color,
@@ -80,9 +89,18 @@ const StackNavigator = () => {
         fontSize = constants.settings.fontSize; 
     } else {
         if (fontSize.toString() === appStateContext.settingFontSize.toString()) return; 
-    }    
+    }
     fontSize = Number(fontSize);
     appStateContext.set_font_size(fontSize)
+  }
+  const SetLine = (lineHeight) => {    
+    if (!lineHeight) { 
+      lineHeight = constants.settings.lineHeight; 
+    } else {
+        if (lineHeight.toString() === appStateContext.settingLineHeight.toString()) return; 
+    }
+    lineHeight = Number(lineHeight);
+    appStateContext.set_line_height(lineHeight)
   }
   const SetTheme = (themeIndex) => {     
       if (!themeIndex) {            
@@ -128,6 +146,13 @@ const StackNavigator = () => {
             console.log("error caught font size");         
             SetSlider(constants.settings.fontSize); 
         })
+
+  Load(constants.settings.lineHeightName)
+      .then(result => SetLine(result))
+      .catch(error => {   
+          console.log("error caught line height");         
+          SetLine(constants.settings.lineHeight); 
+      })
 
   Load(constants.settings.themeIndexName)
       .then(result => SetTheme(result))

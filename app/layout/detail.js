@@ -26,7 +26,10 @@ const Page = props => {
       <Image image={image} />
       <Text 
         textBreakStrategy = {"simple"}
-        style={[appStateContext.settingThemePageFontColor, {fontSize: appStateContext.settingFontSize}]}>
+        style={[appStateContext.settingThemePageFontColor, 
+          {fontSize: appStateContext.settingFontSize}, 
+          {lineHeight: appStateContext.settingLineHeight}
+        ]}>
           {source}{'\n'}{'\n'}{'\n'}
       </Text>
     </View>

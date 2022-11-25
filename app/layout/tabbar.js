@@ -1,5 +1,7 @@
 import React, { Component, useContext } from "react";
 import { View, ScrollView, Text, StyleSheet } from "react-native";
+import Header from "./header";
+import Media from "./media";
 import AppContext from "../utilities/context";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
@@ -65,15 +67,31 @@ const TabStyle = values => {
     >
       {values.list.map((item, i) => (
         /*
+          iterate {item} is the section item data
+          values.props is the book data
             based on the different state, this tabbar item can be 
             a foMenu's root section
             a book's section list
             a section's list
-          */
+        */
         <Tab.Screen
           key={i}
           name={"tab" + item.id}
           options={{ title: item.title }}
+          listeners={{
+            focus: (e) => {
+              // Prevent default action
+              //e.preventDefault();
+              //console.log(values.props.book + " : " + item.title + " : " + values.props.menu + " : " + item.media + " tab is pressed");
+              //console.log("route: " + values.props.book);
+              if (values.props.book > 0) {                
+                values.props.navigation.setOptions({
+                  //headerTitle: props => <Header {...props} title={item.id} />,
+                  headerRight: props => <Media {...props} media={item.media} menu={values.props.menu} book={values.props.book} title={item.title} />,
+                });
+              }
+            },
+          }}
         >
           {props => (
             <ContentScreen
@@ -84,7 +102,7 @@ const TabStyle = values => {
               //when article id is presented either, inherits from previous
               section={values.props.book > 0 ? (values.props.article >= 0 ? values.props.section : item.id) : 0}
               article={values.props.article >= 0 ? item.id : -1} //when an article id is presented, this item.id is an article id of a section of a book
-              media={values.props.media}
+              media={item.media}
             />
           )}
         </Tab.Screen>

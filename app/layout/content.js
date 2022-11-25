@@ -1,18 +1,19 @@
 import React, { Component, useContext } from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
-import { useIsFocused } from "@react-navigation/native"; 
 import styles from "../content/css/styles";
 import AppContext from "../utilities/context";
 import Listitem from "./list";
 import Detail from "./detail";
+import AudioBar from "./audioBar";
 import foData from "../content/data.json";
 import foMenu from "../content/menu.json";
 
 export default class Content extends Component {
   render() {
     //set default content, only listed level 1 objects, performance safe
+    //const isFocused = useIsFocused();
     let content = foMenu.find(item => item.id == this.props.menu);
-    //console.log("content: " + this.props.menu + "," + this.props.book + "," + this.props.section + "," + this.props.article);
+    //console.log("content: " + this.props.menu + "," + this.props.book + "," + this.props.section + "," + this.props.article + " is focused >> " + isFocused);
     //set book content by section id
     if (this.props.menu > 0 && this.props.book > 0) {
       const book = foData.find(item => item.id == this.props.book);
@@ -63,6 +64,7 @@ const GetBasic = values => {
       <ScrollView>
         <Detail source={values.page} image={values.image} />
       </ScrollView>
+      <AudioBar />
     </View>
   )
 }
