@@ -68,6 +68,7 @@ const GetAudioBar = (props) => {
                 //onValueChange={setValue}
                 maximumValue={100}
                 minimumValue={0}
+                disabled={true}
                 step={1}
                 trackStyle={{ height: 10, backgroundColor: 'transparent' }}
                 thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}

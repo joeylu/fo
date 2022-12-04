@@ -41,6 +41,7 @@ export default class Media extends Component {
     const media = this.props.media;
 
     //firstly, check if is has a media file
+    //console.log(this.props.media);
     if (this.props.media !== "undefined" && this.props.media !== "") {
 
       if (this.state.mediaName != this.props.media) {
@@ -58,7 +59,6 @@ export default class Media extends Component {
           console.log("media check: " + error);
         });
       }
-
       return (
         <View style={{flexDirection: 'row'}}>
           <AudioBtn 

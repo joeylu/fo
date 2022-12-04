@@ -209,9 +209,11 @@ const GetAudioBtn = (props) => {
     check this audio media existence, if not, no show
     otherwise, if downloading is currently started, make sure the current download media is not current audio, if matches, no show    
   */
-  //console.log(props.exist);
+  //console.log(props.media + " : " + props.exist);
   if (props.exist === true) {    
     if (appStateContext.downloadStatus !== constants.downloadStatus.notStarted && appStateContext.downloadMedia === props.media) {
+      console.log("re-downloading " + appStateContext.downloadMedia + " : " + props.media);
+      //when media file is existed, but is redownloading
       return <Text />
     } else {
       return (

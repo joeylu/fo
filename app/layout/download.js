@@ -137,7 +137,7 @@ const GetDefaultBtn = props => {
 const GetProgressBtn = props => {  
   //console.log("download debug 003: " + props.media + " / " + props.progress);
   const appStateContext = useContext(AppContext);
-  appStateContext.set_download_media(props.media);
+  //appStateContext.set_download_media(props.media);
   return (
     <TouchableOpacity
       style={styles.headerDownloading}
