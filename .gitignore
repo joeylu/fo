@@ -13,6 +13,7 @@
 !regexNote.txt
 !yarn-error.log
 !yarn.lock
+!eas.json
 
 # But not these folders
 !/app/
