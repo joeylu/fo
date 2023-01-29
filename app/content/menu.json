@@ -129,6 +129,11 @@
         "id": 1024,
         "title": "佛顶尊胜陀罗尼经",
         "brief": "各版本译本"
+      },
+      {        
+        "id": 1025,
+        "title": "宝箧印陀罗尼经",
+        "brief": "唐朝三藏沙门大广智不空奉诏译"
       }
     ],
     "page": ""
@@ -213,6 +218,11 @@
         "id": 2026,
         "title": "毗卢遮那佛大灌顶光真言",
         "brief": ""
+      },
+      {        
+        "id": 1025,
+        "title": "宝箧印咒",
+        "brief": "宝箧印陀罗尼经"
       }
     ],    
     "page": ""
@@ -266,6 +276,6 @@
     "title": "版本及更新",
     "brief": "",
     "list": [],
-    "page": ["佛经及佛咒是一款私人开发的小应用，目的是为了尽可能的收集佛经佛咒以及提供无网络下播放音乐的功能。因为开发能力有限，如果发现错误和问题，请Email（halagame@gmail.com）提交，我会尽量修正\n\n", "当前版本号为18.0.3\n\n", "程序猿可以自行在Github里Clone整个项目，地址是https://github.com/joeylu/fo.git\n\n", "已经安排在之后几次更新中的功能及内容有：\n", "· 添加更多的佛经和佛咒（如果有其他朋友希望一起添加的，请联络我并提供文档\n", "· 为长文本提供翻页功能\n", "· 在文本中实现Markup功能\n", "· 在文本中实现书签功能\n", "· 继续优化播放器\n\n", "本次更新内容：\n", "增加了大光明咒及其唱诵。\n\n","本应用的一切资源均来自互联网，以下是主要的几个资源网站，如果有侵权行为，请告知，我会立刻修正\n", "地藏孝亲网(www.dizang.org)\n", "佛学多媒体资料库(www.buda.idv.tw/)\n", "维基百科(www.wikipedia.org)\n", "百度百科(baike.baidu.com)\n", "佛教音乐网(http://buddha.goodweb.cn/)\n", "厦门太平岩寺(http://www.taipingyansi.com)\n", "佛弟子(http://fodizi.com/)\n", "觉悟佛教网(https://www.fojiaowang.com.cn/)\n","佛经网(https://www.fojing.com/)"]
+    "page": ["佛经及佛咒是一款私人开发的小应用，目的是为了尽可能的收集佛经佛咒以及提供无网络下播放音乐的功能。因为开发能力有限，如果发现错误和问题，请Email（halagame@gmail.com）提交，我会尽量修正\n\n", "当前版本号为18.0.4\n\n", "程序猿可以自行在Github里Clone整个项目，地址是https://github.com/joeylu/fo.git\n\n", "已经安排在之后几次更新中的功能及内容有：\n", "· 添加更多的佛经和佛咒（如果有其他朋友希望一起添加的，请联络我并提供文档\n", "· 为长文本提供翻页功能\n", "· 在文本中实现Markup功能\n", "· 在文本中实现书签功能\n", "· 继续优化播放器\n\n", "本次更新内容：\n", "增加了宝箧印陀罗尼经，宝箧印陀罗尼及其唱诵。\n\n","本应用的一切资源均来自互联网，以下是主要的几个资源网站，如果有侵权行为，请告知，我会立刻修正\n", "地藏孝亲网(www.dizang.org)\n", "佛学多媒体资料库(www.buda.idv.tw/)\n", "维基百科(www.wikipedia.org)\n", "百度百科(baike.baidu.com)\n", "佛教音乐网(http://buddha.goodweb.cn/)\n", "厦门太平岩寺(http://www.taipingyansi.com)\n", "佛弟子(http://fodizi.com/)\n", "觉悟佛教网(https://www.fojiaowang.com.cn/)\n","佛经网(https://www.fojing.com/)"]
   }
 ]
