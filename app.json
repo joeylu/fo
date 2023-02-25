@@ -2,7 +2,7 @@
   "expo": {
     "name": "佛经与佛咒",
     "slug": "fo",
-    "version": "18.0.4",
+    "version": "18.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -19,11 +19,11 @@
     "android": {
       "package": "com.halabang.testframe",
       "permissions": [],
-      "versionCode": 53
+      "versionCode": 54
     },
     "ios": {
       "bundleIdentifier": "com.halabang.testframe",
-      "buildNumber": "18.0.4",
+      "buildNumber": "18.0.5",
       "supportsTablet": true,
       "infoPlist": {
         "UIBackgroundModes": [
