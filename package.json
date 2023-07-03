@@ -16,7 +16,7 @@
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.1",
     "babel-preset-es2015": "^6.24.1",
-    "expo": "^48.0.0",
+    "expo": "^48.0.19",
     "expo-av": "^13.2.1",
     "expo-file-system": "^15.2.2",
     "expo-secure-store": "^12.1.1",
@@ -40,5 +40,10 @@
     "@babel/core": "^7.18.6",
     "babel-preset-expo": "^9.3.0"
   },
-  "private": true
+  "private": true,
+  "name": "fo",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
