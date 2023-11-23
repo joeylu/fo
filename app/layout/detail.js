@@ -1,5 +1,5 @@
 import React, { Component, useContext } from "react";
-import { View, ScrollView, Text, StyleSheet, Button } from "react-native";
+import { View, ScrollView, Text, StyleSheet, Pressable } from "react-native";
 import { Divider } from 'react-native-elements';
 import AppContext from "../utilities/context";
 import Image from "./images";
@@ -16,15 +16,16 @@ export default class Detail extends Component {
     />
   }
 }
-
 const Page = props => {
   const appStateContext = useContext(AppContext);
+
   let source = props.source;
   let image = props.image;
   return (
     <View style={[styles.pageBody, appStateContext.settingThemePageBackgroundColor]}>
       <Image image={image} />
       <Text 
+        selectable = {appStateContext.settingTextSelectable}
         textBreakStrategy = {"simple"}
         style={[appStateContext.settingThemePageFontColor, 
           {fontSize: appStateContext.settingFontSize}, 
@@ -35,4 +36,8 @@ const Page = props => {
     </View>
   );
 }
+
+const timeout = setTimeout(function () {
+  console.log('Hello from setTimeout')
+}, 5000)
 

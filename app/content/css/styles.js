@@ -28,10 +28,14 @@ export default StyleSheet.create({
   contentRow: {
     flex: 1, 
     flexDirection: 'row',
-    marginBottom: 20
+    marginTop: 10,
+    marginBottom: 5
   },
   contentCenterView: {
-    flex: 1, alignItems: 'stretch', justifyContent: 'center', alignItems: 'center'
+    flex: 1, justifyContent: 'center', alignItems: 'center'
+  },
+  contentCenterViewLeft: {
+    flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start'
   },
   contentPage: {
     margin: 25

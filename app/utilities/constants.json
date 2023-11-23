@@ -1,5 +1,6 @@
 { 
     "appTitle": "佛经与佛咒" ,
+    "testData": "Testing Data",
     "mp3Server": "https://www.exchangepromise.com/fo/",
     "defaultColor1": "#ff8040",
     "defaultColor2": "#b32400",

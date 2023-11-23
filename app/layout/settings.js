@@ -1,5 +1,5 @@
 import React, { Component, useContext } from "react";
-import { View, ScrollView, Text, Alert } from "react-native";
+import { View, ScrollView, Text, Switch } from "react-native";
 import { Divider, ButtonGroup } from 'react-native-elements';
 import Slider from '@react-native-community/slider';
 import AppContext from "../utilities/context";
@@ -68,6 +68,10 @@ const SettingContent = props => {
                 console.log(e);
             }
         });
+    }     
+    const SetTextSelectable = (enable)=> {
+        appStateContext.set_text_selectable(enable);
+        //console.log(appStateContext.settingTextSelectable.toString());
     }
     
 
@@ -172,6 +176,21 @@ const SettingContent = props => {
                         buttonStyle = {appStateContext.settingThemePageBackgroundColor}
                         selectedButtonStyle = {{backgroundColor: constants.defaultColor1}}
                         containerStyle={{height: 50, borderWidth: 0}} />
+                </View>
+                <Divider style={styles.divider} />
+                <View>
+                    <View style={styles.contentRow}>
+                        <Text style={[{fontSize: appStateContext.settingFontSize}, appStateContext.settingThemePageFontColor]}>允许复制黏贴：{'\n'}</Text>
+                    </View>
+                    <View style={styles.contentCenterViewLeft}>
+                        <Switch
+                            style={[{marginLeft: 20}, { transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }] }]}
+                            onValueChange={(value) => {SetTextSelectable(value)}}
+                            //onValueChange={toggleSwitch}
+                            value={appStateContext.settingTextSelectable}
+                        />
+                        <Text>为了防止误触，默认状态下关闭选择文本功能及其复制黏贴选项</Text>
+                    </View>
                 </View>
             </ScrollView>
         </View>

@@ -13,7 +13,8 @@ import { Load } from "./app/utilities/storage";
 ;
 const Stack = createStackNavigator();
 
-function App() {
+function App() {  
+  const [test_string, set_test_string] = useState(styles.testData);
   // Define as many global variables as your app needs, and hooks to set the state of the variable.
   // For each global variable, define a function for updating it. In the case of download_progress, we’ll just use set_download_progress.
   // useState usage: const [var, set action] = useState("initialValue")
@@ -35,7 +36,11 @@ function App() {
   const [setting_theme_page_font_color, set_theme_page_font_color] = useState(styles.pageFontLight);
   const [setting_theme_header_background_color, set_theme_header_background_color] = useState(styles.headerBgLight);
   const [setting_theme_tab_background_color, set_theme_tab_background_color] = useState(styles.tabBgLight);
+  const [setting_text_selectable, set_text_selectable] = useState(false);
   const appState = {
+    testString: test_string,    
+    set_test_string,
+    //constants
     downloadTitle: download_title,
     downloadMedia: download_media,
     downloadProgress: download_progress,
@@ -64,6 +69,7 @@ function App() {
     settingThemePageFontColor: setting_theme_page_font_color,
     settingThemeHeaderBackgroundColor: setting_theme_header_background_color,
     settingThemeTabBackgroundColor: setting_theme_tab_background_color,
+    settingTextSelectable: setting_text_selectable,
     set_font_size,
     set_line_height,
     set_theme,
@@ -71,6 +77,7 @@ function App() {
     set_theme_page_font_color,
     set_theme_header_background_color,
     set_theme_tab_background_color,
+    set_text_selectable
   };
   return (
     <AppContext.Provider value={appState}>
