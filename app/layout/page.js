@@ -13,16 +13,17 @@ export default class HomePage extends Component {
     super(props);
 
     this.state = {
-      menu: 0,
-      book: 0,
-      section: 0,
-      article: 0,
+      menu: 0, //main menu
+      book: 0, //book from menu.json, level 1
+      section: 0, //sections in this book, level 2
+      article: 0, //section article, could be a list of pages, or a single pages, level 3
+      chapter: 0, //page chapters, level 4
       home: true,
     };
   }
   componentDidMount() {
     //set default, article is an index number to a book > section > list index
-    this.menu = 0, this.book = 0, this.section = 0, this.article = -1;
+    this.menu = 0, this.book = 0, this.section = 0, this.article = -1, this.chapter = 0;
     this.home = true;
     //set header
     if (this.props.navigation) {
@@ -49,6 +50,7 @@ export default class HomePage extends Component {
         this.book = this.props.route.params.book;
         this.section = this.props.route.params.section;
         this.article = this.props.route.params.article;
+        this.chapter = this.props.route.params.chapter;
         this.home = false;
       }
       //console.log("page home check: " + this.home);
@@ -72,12 +74,18 @@ export default class HomePage extends Component {
     }
     //set tab
     if (this.props.route.params) {
-      //console.log("page: " + this.props.route.params.menu + ", " + this.props.route.params.book + " : " + this.props.route.params.section);
-      if (typeof this.props.route.params.menu !== "undefined" && typeof this.props.route.params.book !== "undefined" && typeof this.props.route.params.section !== "undefined" && typeof this.props.route.params.article !== "undefined") {
+      // console.log("menu id: " + this.props.route.params.menu + ", book id: " + this.props.route.params.book + " section id: " + this.props.route.params.section + " article id: " + this.props.route.params.article + " chapter id: " + this.props.route.params.chapter);
+      
+      if (typeof this.props.route.params.menu !== "undefined" && 
+      typeof this.props.route.params.book !== "undefined" && 
+      typeof this.props.route.params.section !== "undefined" && 
+      typeof this.props.route.params.article !== "undefined" && 
+      typeof this.props.route.params.chapter !== "undefined") {
         this.menu = this.props.route.params.menu;
         this.book = this.props.route.params.book;
         this.section = this.props.route.params.section;
         this.article = this.props.route.params.article;
+        this.chapter = this.props.route.params.chapter;
       }
     }
     
@@ -86,6 +94,7 @@ export default class HomePage extends Component {
       book: this.book,
       section: this.section,
       article: this.article,
+      chapter: this.chapter,
       home: this.home,
     });
   }
@@ -93,7 +102,7 @@ export default class HomePage extends Component {
   render() {
     //console.log("page: " + this.state.book);
     return ( 
-      <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} />
+      <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} chapter={this.state.chapter} />
     );
   }
 }

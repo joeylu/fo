@@ -23,7 +23,7 @@ export default class TabBar extends Component {
   componentDidMount() {    
     //
     this.setState({
-      list: InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article) 
+      list: InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article, this.props.chapter) 
       //only validate the list length to perform the renderer
     })
   }
@@ -36,7 +36,7 @@ export default class TabBar extends Component {
     */
     //console.log(this.state.list.length + " : " + this.list.length);
 
-    this.list = InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article);
+    this.list = InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article, this.props.chapter);
     //console.log(this.list);
     if (this.state.list.length > 0) {
       return <TabStyle list={this.list} props={this.props} />;
@@ -63,7 +63,7 @@ const TabStyle = values => {
         lazyPlaceholder: ()=>{<View>Loading...</View>}
       }}
       sceneContainerStyle={{ backgroundColor: "#ffffff" }}
-      initialRouteName={values.props.article == 0 ? "tab1" : "tab" + values.props.article}
+      initialRouteName={values.props.article == 0 ? "tab1" : (values.props.chapter > 0 ? "tab" + values.props.chapter : "tab" + values.props.article)}
     >
       {values.list.map((item, i) => (
         /*
@@ -101,7 +101,8 @@ const TabStyle = values => {
               //when book id is presented, this item.id is a section id of this book
               //when article id is presented either, inherits from previous
               section={values.props.book > 0 ? (values.props.article >= 0 ? values.props.section : item.id) : 0}
-              article={values.props.article >= 0 ? item.id : -1} //when an article id is presented, this item.id is an article id of a section of a book
+              article={values.props.article >= 0 ? (values.props.chapter > 0 ? values.props.article : item.id) : -1} //when an article id is presented, this item.id is an article id of a section of a book
+              chapter={values.props.chapter > 0 ? item.id : 0 } //when a chapter id is presented, this item.id is a chapter id of an article of a section of a book
               media={item.media}
             />
           )}
@@ -111,22 +112,28 @@ const TabStyle = values => {
   );
 }
 
-function InitTabList(menuID, bookID, sectionID, articleID){
+function InitTabList(menuID, bookID, sectionID, articleID, chapterID){
   //console.log("tablist: " + menuID + ": " + bookID);
   if (menuID <= 0) {
     //when menuID is not provided, get the root of Fo
     //console.log("menu: " + menuID + ", " + bookID);
     return foMenu;
   } else if(bookID > 0) {
-    const book = foData.find(item => item.id == bookID);
+    const book = foData.find(b => b.id == bookID);
     if ( articleID < 0) {
       //console.log("book: " + menuID + ", " + bookID);
       //when book ID is provided and article index is not set, get book sections
       if (book.sections) return book.sections;
     } else {
-      //when book ID is provided and article index is set, get articles from the section
-      const bookSection = book.sections.find(item => item.id == sectionID);
-      if (bookSection) return bookSection.list;
+      //when book ID is provided and article index is set, means page is routed from List component pressed event, a page from an article list is pressed, tab should now be showing an article object list[]
+      const bookSection = book.sections.find(s => s.id == sectionID);
+      if (chapterID <= 0) {
+        if (bookSection) return bookSection.list;
+      } else {
+        //when article id is provided and chapter index is set, means page is routed from List component pressed event, a chapter from an article object list[] child page object is pressed, tab should now be showing chapters from that child object
+        const bookArticleListPage = bookSection.list.find(l => l.id == articleID);
+        if (bookArticleListPage) return bookArticleListPage.chapters;
+      }
     }
   } 
   return [];
