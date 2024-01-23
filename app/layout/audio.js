@@ -41,9 +41,7 @@ const GetAudioBtn = (props) => {
   const onPlaybackStatusUpdate = (status) => {
     //console.log(status.durationMillis + " / " + status.positionMillis + " = " + (status.positionMillis/status.durationMillis*100));
     appStateContext.set_audio_playing_duration(status.durationMillis)
-    appStateContext.set_audio_playback_update(
-      (status.positionMillis/status.durationMillis) * 100
-    );
+    appStateContext.set_audio_playback_update((status.positionMillis/status.durationMillis) * 100);
   }
 
   const playAudioHandler = async () => {
@@ -100,7 +98,7 @@ const GetAudioBtn = (props) => {
       }
     } catch (e) {
       console.log(e);
-      Alert.alert("加载出错", "无法加载新音频，请尝试推出当前页面或重启APP");
+      Alert.alert("加载出错", "无法加载新音频，请尝试退出当前页面或重启APP");
     }
   };
   const _loadNewAudio = async (media, title) => {
@@ -108,7 +106,7 @@ const GetAudioBtn = (props) => {
       //loading new sound
       const source = { uri: mp3Folder + media };
       const newPlayback = new Audio.Sound();
-      newPlayback.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+      newPlayback.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate); //invoke everytime when this playback status has updated, such as duration
       //set loading initial status
       const initialStatus = {
         shouldPlay: true,
@@ -130,6 +128,8 @@ const GetAudioBtn = (props) => {
           ); //since it's a local file and shouldPlay is true, should play the audio immediately instead buffering
           //console.log("_loadNewAudio " + title + " > " + appStateContext.audioPlayingTitle);
           //console.log("loading finished: " + JSON.stringify(playbackStatus));
+          
+          //appStateContext.set_audio_is_seekable(true); //pass a single playing param to listeners such as audio slider bar
         })
         .catch((error) => {
           console.log("loading audio error: " + error);
@@ -193,7 +193,8 @@ const GetAudioBtn = (props) => {
           appStateContext.set_audio_playing_status(
             constants.audioStatus.unloaded
           );
-          console.log("unload finished: ");
+          //appStateContext.set_audio_is_seekable(false);
+          //console.log("unload finished: ");
         })
         .catch((error) => {
           console.log("unload audio error: " + error);
@@ -205,11 +206,13 @@ const GetAudioBtn = (props) => {
     }
   };
 
+
   /*
     check this audio media existence, if not, no show
     otherwise, if downloading is currently started, make sure the current download media is not current audio, if matches, no show    
   */
   //console.log(props.media + " : " + props.exist);
+  console.log("currently playing at position: " + appStateContext.audioPlaybackPosition);
   if (props.exist === true) {    
     if (appStateContext.downloadStatus !== constants.downloadStatus.notStarted && appStateContext.downloadMedia === props.media) {
       console.log("re-downloading " + appStateContext.downloadMedia + " : " + props.media);

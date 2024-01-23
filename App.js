@@ -24,10 +24,12 @@ function App() {
   const [download_status, set_download_status] = useState(constants.downloadStatus.notStarted);
   const [audio_playing_title, set_audio_playing_title] = useState("");
   const [audio_playing_media, set_audio_playing_media] = useState("");
-  const [audio_playing_duration, set_audio_playing_duration] = useState(0.0);
+  const [audio_playing_duration, set_audio_playing_duration] = useState(0.0); //total duration of this audio
   const [audio_playing_status, set_audio_playing_status] = useState(constants.audioStatus.unloaded);
   const [audio_player_instance, set_audio_player_instance] = useState(null);
-  const [audio_playback_update, set_audio_playback_update] = useState(null);
+  const [audio_playback_update, set_audio_playback_update] = useState(null); //get playing position (0-100) of this audio from its instance onPlaybackUpdate
+  const [audio_playback_position, set_audio_playback_position] = useState(0.0); //set playing position from an user input
+  const [audio_playback_allow_update, set_audio_playback_allow_update] = useState(true); //indicate this audio can be synced with its position from slider bar
   //app settings
   const [setting_font_size, set_font_size] = useState(constants.settings.fontSize);
   const [setting_line_height, set_line_height] = useState(constants.settings.lineHeight);
@@ -51,6 +53,8 @@ function App() {
     audioPlayingStatus: audio_playing_status,
     audioPlayerInstance: audio_player_instance,
     audioPlaybackUpdate: audio_playback_update,
+    audioPlaybackPosition : audio_playback_position,
+    audioPlaybackAllowUpdate : audio_playback_allow_update,
     set_download_title,
     set_download_progress,
     set_download_status,
@@ -61,6 +65,8 @@ function App() {
     set_audio_playing_status,
     set_audio_player_instance,
     set_audio_playback_update,
+    set_audio_playback_position,
+    set_audio_playback_allow_update,
     //settings
     settingFontSize: setting_font_size,
     settingLineHeight: setting_line_height,

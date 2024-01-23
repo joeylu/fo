@@ -8,8 +8,8 @@ import constants from "../utilities/constants.json";
 export default class AudioBar extends Component { 
     constructor(props) {
         super(props);      
-        this.state = {currentPosition: 0};
-        this.state = {newPostion: 0};        
+        //this.state = {currentPosition: 0};
+        //this.state = {newPostion: 30};
         //this.updatePlaybackPosition = this.updatePlaybackPosition.bind(this);
     }
 
@@ -31,31 +31,10 @@ export default class AudioBar extends Component {
 const GetAudioBar = (props) => {    
     const appStateContext = useContext(AppContext);
     let positionValue = 0;
-    let playbackTitle = "";
-    let playbackStatus = "";
-    let playbackDuration = "00:00";
-    let playbackTimePosition = "00:00";
 
-    if (appStateContext.audioPlayingTitle !== "" && typeof appStateContext.audioPlayingTitle !== "undefined") {
-        playbackTitle = appStateContext.audioPlayingTitle;        
-        if (typeof appStateContext.audioPlayingDuration !== "undefined") {
-            playbackDuration = MillSecToDuration(appStateContext.audioPlayingDuration);
-        }
-    }
-    if (typeof appStateContext.audioPlayingStatus !== "undefined") {
-        switch (appStateContext.audioPlayingStatus) {
-            case constants.audioStatus.playing:
-                playbackStatus = "正在播放："
-                break;
-            case constants.audioStatus.paused:                
-                playbackStatus = "暂停播放："
-                break;
-        }
-    }
-
-    if (appStateContext.audioPlaybackUpdate > positionValue) {
-        playbackTimePosition = MillSecToDuration(appStateContext.audioPlayingDuration * appStateContext.audioPlaybackUpdate / 100);
-        //console.log(playbackTimePosition);
+    //console.log(appStateContext.audioPlaybackAllowUpdate + " : " + appStateContext.audioPlaybackUpdate);
+    if (appStateContext.audioPlaybackAllowUpdate) {
+        //console.log("updating " + appStateContext.audioPlaybackAllowUpdate);
         positionValue = appStateContext.audioPlaybackUpdate;
     }
     
@@ -68,33 +47,68 @@ const GetAudioBar = (props) => {
                 //onValueChange={setValue}
                 maximumValue={100}
                 minimumValue={0}
-                disabled={true}
+                //disabled={false}
                 step={1}
                 trackStyle={{ height: 10, backgroundColor: 'transparent' }}
                 thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}
                 thumbProps={{
-                children: (
-                    <Icon
-                        name="music"
-                        type="font-awesome"
-                        size={20}
-                        reverse
-                        containerStyle={{ bottom: 20, right: 20 }}
-                        color="#ff8040"
-                    />
-                ),
+                    children: (
+                        <Icon
+                            name="music"
+                            type="font-awesome"
+                            size={20}
+                            reverse
+                            containerStyle={{ bottom: 20, right: 20 }}
+                            color="#ff8040"
+                        />
+                    ),
+                }}
+                onSlidingStart={(progress) => {
+                    appStateContext.set_audio_playback_allow_update(false);
+                    console.log("sliding start", progress, appStateContext.audioPlaybackAllowUpdate);
+                  }}
+                onSlidingComplete={(progress) => {
+                    console.log("sliding complete", progress);
+                    appStateContext.set_audio_playback_allow_update(true);
+                    appStateContext.set_audio_playback_position(progress);
                 }}
             />
             <View style={{position: 'absolute', left: 0, top:50}}>
-                <Text>{playbackTimePosition}/{playbackDuration}</Text>
+                <PlayingTimer />
             </View>
             <View style={{position: 'absolute', right: 5, top:50}}>
-                <Text>{playbackStatus}{playbackTitle}</Text>
+                <PlayingStatus />
             </View>
         </View>
     )
 }
 
+const PlayingStatus = () => {
+    const appStateContext = useContext(AppContext);
+    if (typeof appStateContext.audioPlayingStatus !== "undefined") {
+        switch (appStateContext.audioPlayingStatus) {
+            case constants.audioStatus.playing:
+                return (<Text>正在播放：{appStateContext.audioPlayingTitle}</Text>);
+            case constants.audioStatus.paused:      
+                return (<Text>暂停播放：{appStateContext.audioPlayingTitle}</Text>);
+        }
+    }
+    return (<Text>目前没有播放音频</Text>);
+}
+const PlayingTimer = () => {
+    const appStateContext = useContext(AppContext);
+    MillSecToDuration(appStateContext.audioPlayingDuration);
+    if (typeof appStateContext.audioPlayingDuration !== "undefined") {
+        return (
+            <Text>
+                {MillSecToDuration(appStateContext.audioPlayingDuration * appStateContext.audioPlaybackUpdate / 100)} / 
+                {MillSecToDuration(appStateContext.audioPlayingDuration)}
+            </Text>
+        );
+        
+    }
+    return (<Text>00:00/00:00</Text>);
+}
 const MillSecToDuration = (duration) => {
     try {
         var milliseconds = parseInt((duration % 1000) / 100),
