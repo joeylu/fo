@@ -13,6 +13,7 @@ export default class Detail extends Component {
     return <Page 
       source={this.props.source}
       image={this.props.image}
+      selectable={this.props.selectable}
     />
   }
 }
@@ -21,11 +22,12 @@ const Page = props => {
 
   let source = props.source;
   let image = props.image;
+  let is_selectable = props.selectable != 0;
   return (
     <View style={[styles.pageBody, appStateContext.settingThemePageBackgroundColor]}>
       <Image image={image} />
       <Text 
-        selectable = {appStateContext.settingTextSelectable}
+        selectable = { is_selectable }
         textBreakStrategy = {"simple"}
         style={[appStateContext.settingThemePageFontColor, 
           {fontSize: appStateContext.settingFontSize}, 

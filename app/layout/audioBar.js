@@ -1,5 +1,5 @@
-import React, { Component, useContext } from 'react';
-import { View, ScrollView, Text, StyleSheet, Animated } from 'react-native';
+import React, { Component, useContext, useRef } from 'react';
+import { View, ScrollView, Text } from 'react-native';
 import { Slider, Icon } from 'react-native-elements';
 import styles from "../content/css/styles";
 import AppContext from "../utilities/context";
@@ -19,36 +19,33 @@ export default class AudioBar extends Component {
     // }
 
     render() {
-        // if (this.state.newPostion > this.state.currentPosition) {
-        //     this.setState({currentPosition: this.state.newPostion});
-        // }
         return (
-            <GetAudioBar />
+            <GetAudioBar slideable={this.props.media} />
         )
     }    
 }
 
 const GetAudioBar = (props) => {    
     const appStateContext = useContext(AppContext);
-    let positionValue = 0;
+    const audioSlideable = useRef(); //useContext wont get updated its value in onPlaybackStatusUpdate callback
+    audioSlideable.current = appStateContext.audioIsSlideable;
+    //console.log("current audio at: " + appStateContext.audioPlaybackUpdate + " and slideable is " + audioSlideable.current);
 
-    //console.log(appStateContext.audioPlaybackAllowUpdate + " : " + appStateContext.audioPlaybackUpdate);
-    if (appStateContext.audioPlaybackAllowUpdate) {
-        //console.log("updating " + appStateContext.audioPlaybackAllowUpdate);
-        positionValue = appStateContext.audioPlaybackUpdate;
+    let isSlideable = false;
+    if (props.slideable.length > 0 && appStateContext.audioPlayingMedia.length > 0) {
+        isSlideable = props.slideable === appStateContext.audioPlayingMedia;
+        //console.log(props.slideable + " : " + appStateContext.audioPlayingMedia + " : " + isSlideable);
     }
-    
-    //console.log(positionValue + " : " + appStateContext.audioPlaybackUpdate);
-
     return (
-        <View style={[styles.audioBarBody ]}>
+        <View style={ isSlideable ? [styles.audioBarBody ] : [styles.audioBarBodyHidden ]}>
               <Slider
-                value={positionValue}
-                //onValueChange={setValue}
-                maximumValue={100}
+                //thumbTouchSize = {{width: 60, height: 60}}
+                value={ parseFloat(appStateContext.audioPlaybackUpdate) }
+                //onValueChange={(value) => appStateContext.set_audio_playback_update(value)}
+                maximumValue={100} 
                 minimumValue={0}
-                //disabled={false}
-                step={1}
+                //disabled={ (parseInt(audioSlideable.current) == 0) }
+                step={0.1}
                 trackStyle={{ height: 10, backgroundColor: 'transparent' }}
                 thumbStyle={{ height: 20, width: 20, backgroundColor: 'transparent' }}
                 thumbProps={{
@@ -64,19 +61,20 @@ const GetAudioBar = (props) => {
                     ),
                 }}
                 onSlidingStart={(progress) => {
-                    appStateContext.set_audio_playback_allow_update(false);
-                    console.log("sliding start", progress, appStateContext.audioPlaybackAllowUpdate);
-                  }}
+                    console.log("sliding started", progress, (parseInt(appStateContext.audioIsSlideable) == 0));
+                    appStateContext.on_audio_is_seeking(1);
+                    appStateContext.on_audio_playback_position_set(-2.0);
+                }}
                 onSlidingComplete={(progress) => {
                     console.log("sliding complete", progress);
-                    appStateContext.set_audio_playback_allow_update(true);
-                    appStateContext.set_audio_playback_position(progress);
+                    appStateContext.on_audio_is_seeking(0);
+                    appStateContext.on_audio_playback_position_set(progress);
                 }}
             />
-            <View style={{position: 'absolute', left: 0, top:50}}>
+            <View style={{position: 'absolute', left: 50, bottom:10}}>
                 <PlayingTimer />
             </View>
-            <View style={{position: 'absolute', right: 5, top:50}}>
+            <View style={{position: 'absolute', right: 50, bottom:10}}>
                 <PlayingStatus />
             </View>
         </View>
@@ -88,26 +86,25 @@ const PlayingStatus = () => {
     if (typeof appStateContext.audioPlayingStatus !== "undefined") {
         switch (appStateContext.audioPlayingStatus) {
             case constants.audioStatus.playing:
-                return (<Text>正在播放：{appStateContext.audioPlayingTitle}</Text>);
+                return (<Text style={{color:"#ffffff"}}>正在播放：{appStateContext.audioPlayingTitle}</Text>);
             case constants.audioStatus.paused:      
-                return (<Text>暂停播放：{appStateContext.audioPlayingTitle}</Text>);
+                return (<Text style={{color:"#ffffff"}}>暂停播放：{appStateContext.audioPlayingTitle}</Text>);
         }
     }
-    return (<Text>目前没有播放音频</Text>);
+    return (<Text style={{color:"#ffffff"}}>目前没有播放音频</Text>);
 }
 const PlayingTimer = () => {
     const appStateContext = useContext(AppContext);
-    MillSecToDuration(appStateContext.audioPlayingDuration);
     if (typeof appStateContext.audioPlayingDuration !== "undefined") {
         return (
-            <Text>
+            <Text style={{color:"#ffffff"}}>
                 {MillSecToDuration(appStateContext.audioPlayingDuration * appStateContext.audioPlaybackUpdate / 100)} / 
                 {MillSecToDuration(appStateContext.audioPlayingDuration)}
             </Text>
         );
         
     }
-    return (<Text>00:00/00:00</Text>);
+    return (<Text style={{color:"#ffffff"}}>00:00/00:00</Text>);
 }
 const MillSecToDuration = (duration) => {
     try {

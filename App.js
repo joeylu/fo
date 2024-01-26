@@ -18,6 +18,9 @@ function App() {
   // Define as many global variables as your app needs, and hooks to set the state of the variable.
   // For each global variable, define a function for updating it. In the case of download_progress, we’ll just use set_download_progress.
   // useState usage: const [var, set action] = useState("initialValue")
+  // setState() is usually asynchronous, which means that at the time you console.log the state, it's not updated yet
+  // state value will not get synced from a callback, such from audio onPlaybackUpdated(), use ref in local to resolve the issue (https://stackoverflow.com/questions/71447566/react-state-variables-not-updating-in-function)
+  //for some reason, boolean type does not work because useState turns boolean type to string, not sure why, using int instead
   const [download_title, set_download_title] = useState(constants.downloadTitle);
   const [download_media, set_download_media] = useState(constants.downloadMedia);
   const [download_progress, set_download_progress] = useState(0.0);
@@ -27,9 +30,10 @@ function App() {
   const [audio_playing_duration, set_audio_playing_duration] = useState(0.0); //total duration of this audio
   const [audio_playing_status, set_audio_playing_status] = useState(constants.audioStatus.unloaded);
   const [audio_player_instance, set_audio_player_instance] = useState(null);
-  const [audio_playback_update, set_audio_playback_update] = useState(null); //get playing position (0-100) of this audio from its instance onPlaybackUpdate
-  const [audio_playback_position, set_audio_playback_position] = useState(0.0); //set playing position from an user input
-  const [audio_playback_allow_update, set_audio_playback_allow_update] = useState(true); //indicate this audio can be synced with its position from slider bar
+  const [audio_playback_update, set_audio_playback_update] = useState(0.0); //get position (0-100) of this audio from its instance onPlaybackUpdate
+  const [audio_is_seeking, on_audio_is_seeking] = useState(0);
+  const [audio_slideable, set_audio_slideable] = useState(0);
+  const [audio_playback_position_set, on_audio_playback_position_set] = useState(-1.0); //whenever user input is finalizded such as on slider completed, a negative number indicates seeking has not yet started
   //app settings
   const [setting_font_size, set_font_size] = useState(constants.settings.fontSize);
   const [setting_line_height, set_line_height] = useState(constants.settings.lineHeight);
@@ -38,7 +42,8 @@ function App() {
   const [setting_theme_page_font_color, set_theme_page_font_color] = useState(styles.pageFontLight);
   const [setting_theme_header_background_color, set_theme_header_background_color] = useState(styles.headerBgLight);
   const [setting_theme_tab_background_color, set_theme_tab_background_color] = useState(styles.tabBgLight);
-  const [setting_text_selectable, set_text_selectable] = useState(false);
+  const [setting_text_selectable, set_text_selectable] = useState(0);
+  
   const appState = {
     testString: test_string,    
     set_test_string,
@@ -53,8 +58,9 @@ function App() {
     audioPlayingStatus: audio_playing_status,
     audioPlayerInstance: audio_player_instance,
     audioPlaybackUpdate: audio_playback_update,
-    audioPlaybackPosition : audio_playback_position,
-    audioPlaybackAllowUpdate : audio_playback_allow_update,
+    audioIsSeeking : audio_is_seeking,
+    audioIsSlideable : audio_slideable,
+    audioPlaybackPositionSet : audio_playback_position_set,
     set_download_title,
     set_download_progress,
     set_download_status,
@@ -65,8 +71,8 @@ function App() {
     set_audio_playing_status,
     set_audio_player_instance,
     set_audio_playback_update,
-    set_audio_playback_position,
-    set_audio_playback_allow_update,
+    on_audio_is_seeking,
+    on_audio_playback_position_set,
     //settings
     settingFontSize: setting_font_size,
     settingLineHeight: setting_line_height,
@@ -83,7 +89,8 @@ function App() {
     set_theme_page_font_color,
     set_theme_header_background_color,
     set_theme_tab_background_color,
-    set_text_selectable
+    set_text_selectable,    
+    set_audio_slideable,
   };
   return (
     <AppContext.Provider value={appState}>

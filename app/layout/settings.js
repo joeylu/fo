@@ -70,8 +70,14 @@ const SettingContent = props => {
         });
     }     
     const SetTextSelectable = (enable)=> {
-        appStateContext.set_text_selectable(enable);
-        //console.log(appStateContext.settingTextSelectable.toString());
+        Save(constants.settings.textSelectableName, enable).then(result => {            
+            try {
+                appStateContext.set_text_selectable(enable);
+                //console.log("save: " + appStateContext.settingTextSelectable);
+            } catch(e) {
+                console.log(e);
+            }
+        })
     }
     
 
@@ -130,6 +136,22 @@ const SettingContent = props => {
             SetTheme(constants.settings.themeIndex);
         });
 
+    Load(constants.settings.audioSlideableName)
+        .then(result => { 
+            SetAudioSlideable(result); 
+            //console.log("load " + result + " : " + appStateContext.audioIsSlideable)
+        })
+        .catch(error => {            
+            console.log("error caught audio selectable");
+            SetAudioSlideable(constants.settings.audioSlideable);
+        });
+
+    Load(constants.settings.textSelectableName)
+        .then(result => { SetTextSelectable(result);})
+        .catch(error => {            
+            console.log("error caught audio selectable");
+            SetTextSelectable(constants.settings.textSelectable);
+        });
 
     return (
         <View style={[styles.pageBody, appStateContext.settingThemePageBackgroundColor]}>
@@ -185,13 +207,13 @@ const SettingContent = props => {
                     <View style={styles.contentCenterViewLeft}>
                         <Switch
                             style={[{marginLeft: 20}, { transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }] }]}
-                            onValueChange={(value) => {SetTextSelectable(value)}}
-                            //onValueChange={toggleSwitch}
-                            value={appStateContext.settingTextSelectable}
+                            value={parseInt(appStateContext.settingTextSelectable) != 0 }
+                            onValueChange={(value) => {SetTextSelectable(value ? 1 : 0)}}
                         />
                         <Text>为了防止误触，默认状态下关闭选择文本功能及其复制黏贴选项</Text>
                     </View>
                 </View>
+                <Divider style={styles.divider} />
             </ScrollView>
         </View>
     )   

@@ -6,6 +6,8 @@ import Cog from "./cog";
 import TabBar from "./tabbar";
 import foData from "../content/data.json";
 import constants from "../utilities/constants.json";
+import styles from "../content/css/styles";
+import AudioBar from "./audioBar";
 
 //console.log(DownloadFile("ab.mp3"));
 export default class HomePage extends Component {
@@ -18,13 +20,14 @@ export default class HomePage extends Component {
       section: 0, //sections in this book, level 2
       article: 0, //section article, could be a list of pages, or a single pages, level 3
       chapter: 0, //page chapters, level 4
+      media: "",
       home: true,
     };
   }
   componentDidMount() {
     //set default, article is an index number to a book > section > list index
     this.menu = 0, this.book = 0, this.section = 0, this.article = -1, this.chapter = 0;
-    this.home = true;
+    this.home = true; this.media = "";
     //set header
     if (this.props.navigation) {
       let headerTItle = constants.appTitle;
@@ -52,6 +55,7 @@ export default class HomePage extends Component {
         this.article = this.props.route.params.article;
         this.chapter = this.props.route.params.chapter;
         this.home = false;
+        this.media = headerMedia;
       }
       //console.log("page home check: " + this.home);
       //setting header
@@ -96,13 +100,17 @@ export default class HomePage extends Component {
       article: this.article,
       chapter: this.chapter,
       home: this.home,
+      media: this.media
     });
   }
 
   render() {
-    //console.log("page: " + this.state.book);
-    return ( 
-      <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} chapter={this.state.chapter} />
+    //console.log("audio at " + appStateContext.audioPlaybackUpdate);
+    return (
+      <View style={[styles.pageRoot]}>
+        <TabBar navigation={this.props.navigation} menu={this.state.menu} book={this.state.book} section={this.state.section} article={this.state.article} chapter={this.state.chapter} />
+        <AudioBar media={this.state.media} />
+      </View>
     );
   }
 }

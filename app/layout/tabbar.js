@@ -39,7 +39,7 @@ export default class TabBar extends Component {
     this.list = InitTabList(this.props.menu, this.props.book, this.props.section, this.props.article, this.props.chapter);
     //console.log(this.list);
     if (this.state.list.length > 0) {
-      return <TabStyle list={this.list} props={this.props} />;
+      return ( <TabStyle list={this.list} props={this.props} /> );
     } else {
       //return error
       return <ErrorScreen></ErrorScreen>;

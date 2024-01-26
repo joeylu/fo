@@ -77,6 +77,10 @@ export default StyleSheet.create({
   },
 
   //theme
+  pageRoot: {
+    flex: 1, 
+    alignItems: 'stretch', 
+  },
   pageBodyNoMargin: {
     flex: 1, 
     alignItems: 'stretch', 
@@ -86,7 +90,7 @@ export default StyleSheet.create({
     alignItems: 'stretch', 
     paddingLeft: 20,
     paddingRight: 20,
-    paddingBottom: 50
+    paddingBottom: 0
   },
   pageBodyLight: {
     backgroundColor: '#ffffff',
@@ -128,9 +132,14 @@ export default StyleSheet.create({
     backgroundColor: '#b32400',
   },
   audioBarBody: {
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingTop: 10,
-    paddingBottom: 10
+    paddingLeft: 50,
+    paddingRight: 50,
+    paddingTop: 20,
+    paddingBottom: 40,
+    backgroundColor: "#b32400"
+  },
+  audioBarBodyHidden: {    
+    opacity: 0,
+    height: 0,
   },
 });

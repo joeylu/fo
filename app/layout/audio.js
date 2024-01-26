@@ -1,6 +1,6 @@
-import React, { Component, useContext } from "react";
+import React, { Component, useContext, useRef } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import AppContext from "../utilities/context";
 import styles from "../content/css/styles";
 import { Icon } from "react-native-elements";
@@ -15,10 +15,10 @@ export default class AudioBtn extends Component {
   componentDidMount() {
     Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
-      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
       playThroughEarpieceAndroid: false,
       staysActiveInBackground: true
     });
@@ -37,11 +37,19 @@ export default class AudioBtn extends Component {
 
 const GetAudioBtn = (props) => {
   const appStateContext = useContext(AppContext);
+  const audioSeekingRef = useRef(); //useContext wont get updated its value in onPlaybackStatusUpdate callback
+  const audioPositionSet = useRef(); //useContext wont get updated its value in onPlaybackStatusUpdate callback
+  audioSeekingRef.current = appStateContext.audioIsSeeking;
+  audioPositionSet.current = appStateContext.audioPlaybackPositionSet;
 
-  const onPlaybackStatusUpdate = (status) => {
-    //console.log(status.durationMillis + " / " + status.positionMillis + " = " + (status.positionMillis/status.durationMillis*100));
-    appStateContext.set_audio_playing_duration(status.durationMillis)
-    appStateContext.set_audio_playback_update((status.positionMillis/status.durationMillis) * 100);
+  const onPlaybackStatusUpdate = (status) => {  
+    // console.log(audioSeekingRef.current + ">>>>>> " + (audioSeekingRef.current == 0) + " : " + audioPositionSet.current + " >>>> " + (parseInt(audioPositionSet.current) < 0));  
+    if (parseInt(audioSeekingRef.current) == 0 && parseInt(audioPositionSet.current) < 0) {
+      if (status.durationMillis > 0 && status.positionMillis > 0) {
+        // console.log("updating from audio instance " + audioSeekingRef.current + " : " + audioPositionSet.current + " > " + ((status.positionMillis/status.durationMillis) * 100).toFixed(1));
+        appStateContext.set_audio_playback_update(((status.positionMillis/status.durationMillis) * 100).toFixed(1));
+      }
+    }
   }
 
   const playAudioHandler = async () => {
@@ -123,13 +131,10 @@ const GetAudioBtn = (props) => {
           appStateContext.set_audio_player_instance(newPlayback);
           appStateContext.set_audio_playing_media(media);
           appStateContext.set_audio_playing_title(title);
-          appStateContext.set_audio_playing_status(
-            constants.audioStatus.playing
-          ); //since it's a local file and shouldPlay is true, should play the audio immediately instead buffering
-          //console.log("_loadNewAudio " + title + " > " + appStateContext.audioPlayingTitle);
-          //console.log("loading finished: " + JSON.stringify(playbackStatus));
-          
-          //appStateContext.set_audio_is_seekable(true); //pass a single playing param to listeners such as audio slider bar
+          appStateContext.set_audio_playing_duration(playbackStatus.durationMillis)
+          appStateContext.set_audio_playing_status(constants.audioStatus.playing); //since it's a local file and shouldPlay is true, should play the audio immediately instead buffering
+          appStateContext.on_audio_playback_position_set(-1.0);
+          //console.log("loading finished: " + JSON.stringify(playbackStatus));          
         })
         .catch((error) => {
           console.log("loading audio error: " + error);
@@ -146,11 +151,9 @@ const GetAudioBtn = (props) => {
       await currentPlayback
         .pauseAsync()
         .then(() => {
-          appStateContext.set_audio_player_instance(currentPlayback);
-          appStateContext.set_audio_playing_status(
-            constants.audioStatus.paused
-          );
-          console.log("paused finished: ");
+          //appStateContext.set_audio_player_instance(currentPlayback);
+          appStateContext.set_audio_playing_status(constants.audioStatus.paused);
+          console.log("paused");
         })
         .catch((error) => {
           console.log("pause audio error: " + error);
@@ -167,11 +170,9 @@ const GetAudioBtn = (props) => {
       await currentPlayback
         .playAsync()
         .then(() => {
-          appStateContext.set_audio_player_instance(currentPlayback);
-          appStateContext.set_audio_playing_status(
-            constants.audioStatus.playing
-          );
-          console.log("play finished: ");
+          //appStateContext.set_audio_player_instance(currentPlayback);
+          appStateContext.set_audio_playing_status(constants.audioStatus.playing);
+          console.log("resumed");
         })
         .catch((error) => {
           console.log("play audio error: " + error);
@@ -188,12 +189,12 @@ const GetAudioBtn = (props) => {
       await currentPlayback
         .unloadAsync()
         .then(() => {
-          appStateContext.set_audio_player_instance(null);          
+          appStateContext.set_audio_player_instance(null);   
+          appStateContext.set_audio_playing_media('');       
           appStateContext.set_audio_playing_title('');
-          appStateContext.set_audio_playing_status(
-            constants.audioStatus.unloaded
-          );
-          //appStateContext.set_audio_is_seekable(false);
+          appStateContext.set_audio_playing_status(constants.audioStatus.unloaded);
+          appStateContext.set_audio_playing_duration(0)
+          appStateContext.set_audio_playback_update(0);
           //console.log("unload finished: ");
         })
         .catch((error) => {
@@ -205,14 +206,45 @@ const GetAudioBtn = (props) => {
       Alert.alert("播放出错", "无法终止播放音频，请尝试重启APP");
     }
   };
+  const _seekAudio = async (newPosition) => {    
+    const currentPlayback = appStateContext.audioPlayerInstance;
+    //console.log("123432256432254352: >>>>>>>>>>>> " + newPosition);
+    try {
+      await currentPlayback
+        .playFromPositionAsync(newPosition)
+        .then(() => {
+          appStateContext.set_audio_playing_status(constants.audioStatus.playing);
+          appStateContext.on_audio_playback_position_set(-1); //reset
+          console.log("seeking finished seeking to " + newPosition + " from " + appStateContext.audioPlaybackUpdate);
+        })
+        .catch((error) => {
+          appStateContext.on_audio_playback_position_set(-1); //reset
+          console.log("seeking audio error: " + error);
+          Alert.alert("寻址出错", "无法定位音频，请尝试重启");
+        });
+    } catch (e) {
+      appStateContext.on_audio_playback_position_set(-1); //reset
+      console.log(e);
+      Alert.alert("播放出错", "无法寻址音频，请尝试重启APP");
+    }
+  }
 
+  //console.log(appStateContext.audioIsSeeking + " >> " + (parseInt(appStateContext.audioIsSeeking) != 0) + " : " + appStateContext.audioPlaybackPositionSet + " >> " + (parseInt(appStateContext.audioPlaybackPositionSet) >= 0));
+  //while audio is playing and when user is finished changing the slider (seeking is completed)
+  if (parseInt(appStateContext.audioPlaybackPositionSet) >= 0 && parseInt(appStateContext.audioIsSeeking) == 0) {
+    if (typeof appStateContext.audioPlayerInstance !== "undefined" && appStateContext.audioPlayerInstance != null) {
+      console.log("user has changed audio position from " + appStateContext.audioPlaybackUpdate + " to: " + appStateContext.audioPlaybackPositionSet);
+      _seekAudio(appStateContext.audioPlayingDuration * (appStateContext.audioPlaybackPositionSet / 100));
+    } else {
+      appStateContext.set_audio_playback_update(0);
+    }
+  }
 
   /*
     check this audio media existence, if not, no show
     otherwise, if downloading is currently started, make sure the current download media is not current audio, if matches, no show    
   */
   //console.log(props.media + " : " + props.exist);
-  console.log("currently playing at position: " + appStateContext.audioPlaybackPosition);
   if (props.exist === true) {    
     if (appStateContext.downloadStatus !== constants.downloadStatus.notStarted && appStateContext.downloadMedia === props.media) {
       console.log("re-downloading " + appStateContext.downloadMedia + " : " + props.media);

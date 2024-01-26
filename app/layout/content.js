@@ -77,9 +77,8 @@ const GetBasic = values => {
   return(
     <View style={[styles.pageBody, appStateContext.settingThemePageBackgroundColor]}>
       <ScrollView>
-        <Detail source={values.page} image={values.image} />
+        <Detail source={values.page} image={values.image} selectable={appStateContext.settingTextSelectable} />
       </ScrollView>
-      <AudioBar />
     </View>
   )
 }

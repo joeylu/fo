@@ -23,8 +23,12 @@
         "fontSizeName": "fontSize",
         "lineHeightName": "lineHeight",
         "themeIndexName": "themeIndex",
+        "audioSlideableName": "audioSlideable",
+        "textSelectableName": "textSelectable",
         "fontSize": 14,
         "lineHeight": 28,
-        "themeIndex": 0
+        "themeIndex": 0,
+        "audioSlideable": 0,
+        "textSelectable": 0
     }
 }
