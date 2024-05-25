@@ -202,7 +202,7 @@ const SettingContent = props => {
                 <Divider style={styles.divider} />
                 <View>
                     <View style={styles.contentRow}>
-                        <Text style={[{fontSize: appStateContext.settingFontSize}, appStateContext.settingThemePageFontColor]}>允许复制黏贴：{'\n'}</Text>
+                        <Text style={[{fontSize: appStateContext.settingFontSize}, appStateContext.settingThemePageFontColor]}>允许复制黏贴 (为了防止误触，默认状态下关闭选择文本功能及其复制黏贴选项)：{'\n'}</Text>                        
                     </View>
                     <View style={styles.contentCenterViewLeft}>
                         <Switch
@@ -210,7 +210,6 @@ const SettingContent = props => {
                             value={parseInt(appStateContext.settingTextSelectable) != 0 }
                             onValueChange={(value) => {SetTextSelectable(value ? 1 : 0)}}
                         />
-                        <Text>为了防止误触，默认状态下关闭选择文本功能及其复制黏贴选项</Text>
                     </View>
                 </View>
                 <Divider style={styles.divider} />

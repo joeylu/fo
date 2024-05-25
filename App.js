@@ -32,7 +32,6 @@ function App() {
   const [audio_player_instance, set_audio_player_instance] = useState(null);
   const [audio_playback_update, set_audio_playback_update] = useState(0.0); //get position (0-100) of this audio from its instance onPlaybackUpdate
   const [audio_is_seeking, on_audio_is_seeking] = useState(0);
-  const [audio_slideable, set_audio_slideable] = useState(0);
   const [audio_playback_position_set, on_audio_playback_position_set] = useState(-1.0); //whenever user input is finalizded such as on slider completed, a negative number indicates seeking has not yet started
   //app settings
   const [setting_font_size, set_font_size] = useState(constants.settings.fontSize);
@@ -59,7 +58,6 @@ function App() {
     audioPlayerInstance: audio_player_instance,
     audioPlaybackUpdate: audio_playback_update,
     audioIsSeeking : audio_is_seeking,
-    audioIsSlideable : audio_slideable,
     audioPlaybackPositionSet : audio_playback_position_set,
     set_download_title,
     set_download_progress,
@@ -89,8 +87,7 @@ function App() {
     set_theme_page_font_color,
     set_theme_header_background_color,
     set_theme_tab_background_color,
-    set_text_selectable,    
-    set_audio_slideable,
+    set_text_selectable,
   };
   return (
     <AppContext.Provider value={appState}>

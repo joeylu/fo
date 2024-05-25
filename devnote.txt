@@ -1,2 +1,6 @@
-for tracking routers and screen focues states
-https://reactnavigation.org/docs/use-navigation-state/
+40 华严
+华严外
+大随求梵文
+繁简转换
+金刚般若波罗蜜经的第三十品的标题少了一个理字，应该是，一合理相分第三十
+六十卷第9开始，80卷第14开始，不再自动切换top tab
