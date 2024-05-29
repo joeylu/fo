@@ -10,10 +10,8 @@ file(GLOB reactnativejni_SRC CONFIGURE_DEPENDS *.cpp)
 
 add_compile_options(
         -fexceptions
-        -frtti
         -Wno-unused-lambda-capture
-        -std=c++17
-        -DWITH_INSPECTOR=1)
+        -std=c++20)
 
 ######################
 ### reactnativejni ###

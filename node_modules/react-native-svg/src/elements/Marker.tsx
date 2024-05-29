@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
-import React from 'react';
+import * as React from 'react';
 import extractViewBox from '../lib/extract/extractViewBox';
 import type { NumberProp } from '../lib/extract/types';
 import Shape from './Shape';
 import RNSVGMarker from '../fabric/MarkerNativeComponent';
-import { stringifyPropsForFabric } from '../lib/extract/extractProps';
 import type { NativeMethods } from 'react-native';
 
 export type MarkerUnits = 'strokeWidth' | 'userSpaceOnUse';
@@ -50,7 +49,7 @@ export default class Marker extends Shape<MarkerProps> {
       markerHeight,
       children,
     } = props;
-    const markerProps = stringifyPropsForFabric({
+    const markerProps = {
       name: id,
       refX,
       refY,
@@ -58,14 +57,13 @@ export default class Marker extends Shape<MarkerProps> {
       orient: String(orient),
       markerWidth,
       markerHeight,
-    });
+    };
 
     return (
       <RNSVGMarker
         ref={(ref) => this.refMethod(ref as (Marker & NativeMethods) | null)}
         {...markerProps}
-        {...extractViewBox({ viewBox, preserveAspectRatio })}
-      >
+        {...extractViewBox({ viewBox, preserveAspectRatio })}>
         {children}
       </RNSVGMarker>
     );

@@ -14,8 +14,7 @@
 #include <react/renderer/components/view/ViewEventEmitter.h>
 #include <react/renderer/core/ConcreteShadowNode.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 extern const char TextComponentName[];
 
@@ -30,17 +29,10 @@ class TextShadowNode : public ConcreteShadowNode<
  public:
   static ShadowNodeTraits BaseTraits() {
     auto traits = ConcreteShadowNode::BaseTraits();
-
 #ifdef ANDROID
     traits.set(ShadowNodeTraits::Trait::FormsView);
 #endif
-    traits.set(IdentifierTrait());
-
     return traits;
-  }
-
-  static ShadowNodeTraits::Trait IdentifierTrait() {
-    return ShadowNodeTraits::Trait::Text;
   }
 
   using ConcreteShadowNode::ConcreteShadowNode;
@@ -53,8 +45,8 @@ class TextShadowNode : public ConcreteShadowNode<
       TextEventEmitter>;
 
   TextShadowNode(
-      ShadowNodeFragment const &fragment,
-      ShadowNodeFamily::Shared const &family,
+      const ShadowNodeFragment& fragment,
+      const ShadowNodeFamily::Shared& family,
       ShadowNodeTraits traits)
       : BaseShadowNode(fragment, family, traits), BaseTextShadowNode() {
     orderIndex_ = std::numeric_limits<decltype(orderIndex_)>::max();
@@ -62,5 +54,4 @@ class TextShadowNode : public ConcreteShadowNode<
 #endif
 };
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

@@ -10,8 +10,7 @@
 #include <react/renderer/components/text/RawTextProps.h>
 #include <react/renderer/core/ConcreteShadowNode.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 extern const char RawTextComponentName[];
 
@@ -27,15 +26,6 @@ class RawTextShadowNode : public ConcreteShadowNode<
                               RawTextProps> {
  public:
   using ConcreteShadowNode::ConcreteShadowNode;
-  static ShadowNodeTraits BaseTraits() {
-    auto traits = ConcreteShadowNode::BaseTraits();
-    traits.set(IdentifierTrait());
-    return traits;
-  }
-  static ShadowNodeTraits::Trait IdentifierTrait() {
-    return ShadowNodeTraits::Trait::RawText;
-  }
 };
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

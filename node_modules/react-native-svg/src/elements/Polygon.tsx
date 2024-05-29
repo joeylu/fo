@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Path from './Path';
 import Shape from './Shape';
 import type { CommonPathProps, NumberProp } from '../lib/extract/types';
@@ -17,10 +17,9 @@ export default class Polygon extends Shape<PolygonProps> {
   };
 
   setNativeProps = (
-    props: Object & {
-      points?: string | NumberProp[];
+    props: PolygonProps & {
       d?: string;
-    },
+    }
   ) => {
     const { points } = props;
     if (points) {

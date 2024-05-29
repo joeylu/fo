@@ -9,8 +9,10 @@ package com.facebook.react.common;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.facebook.common.logging.FLog;
+import com.facebook.infer.annotation.Nullsafe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +20,7 @@ import org.json.JSONObject;
  * Tracks errors connecting to or received from the debug server. The debug server returns errors as
  * json objects. This exception represents that error.
  */
+@Nullsafe(Nullsafe.Mode.LOCAL)
 public class DebugServerException extends RuntimeException {
   private static final String GENERIC_ERROR_MESSAGE =
       "\n\nTry the following to fix the issue:\n"
@@ -27,12 +30,13 @@ public class DebugServerException extends RuntimeException {
           + "\u2022 If you're on a physical device connected to the same machine, run 'adb reverse tcp:<PORT> tcp:<PORT>' to forward requests from your device\n"
           + "\u2022 If your device is on the same Wi-Fi network, set 'Debug server host & port for device' in 'Dev settings' to your machine's IP address and the port of the local dev server - e.g. 10.0.1.1:<PORT>\n\n";
 
-  public static DebugServerException makeGeneric(String url, String reason, Throwable t) {
+  public static DebugServerException makeGeneric(
+      @NonNull String url, @NonNull String reason, Throwable t) {
     return makeGeneric(url, reason, "", t);
   }
 
   public static DebugServerException makeGeneric(
-      String url, String reason, String extra, Throwable t) {
+      @NonNull String url, @NonNull String reason, @NonNull String extra, Throwable t) {
     Uri uri = Uri.parse(url);
 
     String message = GENERIC_ERROR_MESSAGE.replace("<PORT>", String.valueOf(uri.getPort()));

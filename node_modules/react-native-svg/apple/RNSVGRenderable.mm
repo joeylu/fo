@@ -245,10 +245,17 @@ UInt32 saturate(CGFloat value)
     CGSize boundsSize = bounds.size;
     CGFloat height = boundsSize.height;
     CGFloat width = boundsSize.width;
+    CGFloat scale = 0.0;
 #if TARGET_OS_OSX
-    CGFloat scale = [[NSScreen mainScreen] backingScaleFactor];
+    scale = [[NSScreen mainScreen] backingScaleFactor];
 #else
-    CGFloat scale = [[UIScreen mainScreen] scale];
+    if (@available(iOS 13.0, *)) {
+      scale = [UITraitCollection currentTraitCollection].displayScale;
+    } else {
+#if !TARGET_OS_VISION
+      scale = [[UIScreen mainScreen] scale];
+#endif
+    }
 #endif // TARGET_OS_OSX
     NSUInteger iheight = (NSUInteger)height;
     NSUInteger iwidth = (NSUInteger)width;
@@ -304,7 +311,33 @@ UInt32 saturate(CGFloat value)
     CGContextRelease(bcontext);
     free(pixels);
 
-    // Render content of current SVG Renderable to image
+#if !TARGET_OS_OSX // [macOS]
+    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+    format.scale = scale;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:boundsSize format:format];
+
+    // Get the content image
+    UIImage *contentImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull rendererContext) {
+      CGContextTranslateCTM(rendererContext.CGContext, 0.0, height);
+      CGContextScaleCTM(rendererContext.CGContext, 1.0, -1.0);
+      [self renderLayerTo:rendererContext.CGContext rect:rect];
+    }];
+
+    // Blend current element and mask
+    UIImage *blendedImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull rendererContext) {
+      CGContextSetBlendMode(rendererContext.CGContext, kCGBlendModeCopy);
+      CGContextDrawImage(rendererContext.CGContext, drawBounds, maskImage);
+      CGContextSetBlendMode(rendererContext.CGContext, kCGBlendModeSourceIn);
+      CGContextDrawImage(rendererContext.CGContext, drawBounds, contentImage.CGImage);
+    }];
+
+    // Render blended result into current render context
+    [blendedImage drawInRect:drawBounds];
+
+    // Render blended result into current render context
+    CGImageRelease(maskImage);
+#else // [macOS
+      // Render content of current SVG Renderable to image
     UIGraphicsBeginImageContextWithOptions(boundsSize, NO, 0.0);
     CGContextRef newContext = UIGraphicsGetCurrentContext();
     CGContextTranslateCTM(newContext, 0.0, height);
@@ -333,6 +366,7 @@ UInt32 saturate(CGFloat value)
     // Render blended result into current render context
     CGContextDrawImage(context, drawBounds, blendedImage);
     CGImageRelease(blendedImage);
+#endif // macOS]
   } else {
     [self renderLayerTo:context rect:rect];
   }
@@ -441,7 +475,9 @@ UInt32 saturate(CGFloat value)
   CGPoint mid = CGPointMake(CGRectGetMidX(pathBounds), CGRectGetMidY(pathBounds));
   CGPoint center = CGPointApplyAffineTransform(mid, matrix);
 
-  self.bounds = bounds;
+  if (!isnan(bounds.size.width) && !isnan(bounds.size.height)) {
+    self.bounds = bounds;
+  }
   if (!isnan(center.x) && !isnan(center.y)) {
     self.center = center;
   }

@@ -14,6 +14,7 @@ import com.facebook.common.logging.FLog;
 import com.facebook.debug.holder.PrinterHolder;
 import com.facebook.debug.tags.ReactDebugOverlayTags;
 import com.facebook.infer.annotation.Assertions;
+import com.facebook.react.R;
 import com.facebook.react.bridge.CatalystInstance;
 import com.facebook.react.bridge.JSBundleLoader;
 import com.facebook.react.bridge.JavaJSExecutor;
@@ -57,11 +58,6 @@ import java.util.concurrent.TimeoutException;
  * instance manager recreates it (through {@link #onNewReactContextCreated). Also, instance manager
  * is responsible for enabling/disabling dev support in case when app is backgrounded or when all
  * the views has been detached from the instance (through {@link #setDevSupportEnabled} method).
- *
- * IMPORTANT: In order for developer support to work correctly it is required that the
- * manifest of your application contain the following entries:
- * {@code <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>}
- * {@code <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>}
  */
 public final class BridgeDevSupportManager extends DevSupportManagerBase {
   private boolean mIsSamplingProfilerEnabled = false;
@@ -91,9 +87,6 @@ public final class BridgeDevSupportManager extends DevSupportManagerBase {
         surfaceDelegateFactory,
         devLoadingViewManager);
 
-    mReactInstanceManagerHelper = reactInstanceManagerHelper;
-    mDevLoadingViewManager = devLoadingViewManager;
-
     if (getDevSettings().isStartSamplingProfilerOnInit()) {
       // Only start the profiler. If its already running, there is an error
       if (!mIsSamplingProfilerEnabled) {
@@ -108,37 +101,13 @@ public final class BridgeDevSupportManager extends DevSupportManagerBase {
     }
 
     addCustomDevOption(
-        mIsSamplingProfilerEnabled ? "Disable Sampling Profiler" : "Enable Sampling Profiler",
+        applicationContext.getString(R.string.catalyst_sample_profiler_toggle),
         new DevOptionHandler() {
           @Override
           public void onOptionSelected() {
             toggleJSSamplingProfiler();
           }
         });
-
-    if (!getDevSettings().isDeviceDebugEnabled()) {
-      // For remote debugging, we open up Chrome running the app in a web worker.
-      // Note that this requires async communication, which will not work for Turbo Modules.
-      addCustomDevOption(
-          getDevSettings().isRemoteJSDebugEnabled()
-              ? applicationContext.getString(com.facebook.react.R.string.catalyst_debug_stop)
-              : applicationContext.getString(com.facebook.react.R.string.catalyst_debug),
-          new DevOptionHandler() {
-            @Override
-            public void onOptionSelected() {
-              getDevSettings().setRemoteJSDebugEnabled(!getDevSettings().isRemoteJSDebugEnabled());
-              handleReloadJS();
-            }
-          });
-    }
-  }
-
-  public DevLoadingViewManager getDevLoadingViewManager() {
-    return mDevLoadingViewManager;
-  }
-
-  public ReactInstanceDevHelper getReactInstanceManagerHelper() {
-    return mReactInstanceManagerHelper;
   }
 
   @Override

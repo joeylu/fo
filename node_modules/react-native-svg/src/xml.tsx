@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import React, { Component, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
+import { Component, useEffect, useMemo, useState } from 'react';
 import Rect from './elements/Rect';
 import Circle from './elements/Circle';
 import Ellipse from './elements/Ellipse';
@@ -65,7 +66,7 @@ export interface AST {
   props: {
     [prop: string]: Styles | string | undefined;
   };
-  Tag: ComponentType<React.PropsWithChildren<{}>>;
+  Tag: ComponentType<React.PropsWithChildren>;
 }
 
 export interface XmlAST extends AST {
@@ -79,8 +80,9 @@ export interface JsxAST extends AST {
 
 export type AdditionalProps = {
   onError?: (error: Error) => void;
-  override?: Object;
+  override?: object;
   onLoad?: () => void;
+  fallback?: JSX.Element;
 };
 
 export type UriProps = SvgProps & { uri: string | null } & AdditionalProps;
@@ -106,17 +108,17 @@ export function SvgAst({ ast, override }: AstProps) {
 export const err = console.error.bind(console);
 
 export function SvgXml(props: XmlProps) {
-  const { onError = err, xml, override } = props;
-  const ast = useMemo<JsxAST | null>(
-    () => (xml !== null ? parse(xml) : null),
-    [xml],
-  );
+  const { onError = err, xml, override, fallback } = props;
 
   try {
+    const ast = useMemo<JsxAST | null>(
+      () => (xml !== null ? parse(xml) : null),
+      [xml]
+    );
     return <SvgAst ast={ast} override={override || props} />;
   } catch (error) {
     onError(error);
-    return null;
+    return fallback ?? null;
   }
 }
 
@@ -129,19 +131,28 @@ export async function fetchText(uri: string) {
 }
 
 export function SvgUri(props: UriProps) {
-  const { onError = err, uri, onLoad } = props;
+  const { onError = err, uri, onLoad, fallback } = props;
   const [xml, setXml] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
   useEffect(() => {
     uri
       ? fetchText(uri)
           .then((data) => {
             setXml(data);
+            isError && setIsError(false);
             onLoad?.();
           })
-          .catch(onError)
+          .catch((e) => {
+            onError(e);
+            setIsError(true);
+          })
       : setXml(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onError, uri, onLoad]);
-  return <SvgXml xml={xml} override={props} />;
+  if (isError) {
+    return fallback ?? null;
+  }
+  return <SvgXml xml={xml} override={props} fallback={fallback} />;
 }
 
 // Extending Component is required for Animated support.
@@ -151,12 +162,14 @@ export class SvgFromXml extends Component<XmlProps, XmlState> {
   componentDidMount() {
     this.parse(this.props.xml);
   }
+
   componentDidUpdate(prevProps: { xml: string | null }) {
     const { xml } = this.props;
     if (xml !== prevProps.xml) {
       this.parse(xml);
     }
   }
+
   parse(xml: string | null) {
     try {
       this.setState({ ast: xml ? parse(xml) : null });
@@ -164,6 +177,7 @@ export class SvgFromXml extends Component<XmlProps, XmlState> {
       console.error(e);
     }
   }
+
   render() {
     const {
       props,
@@ -178,12 +192,14 @@ export class SvgFromUri extends Component<UriProps, UriState> {
   componentDidMount() {
     this.fetch(this.props.uri);
   }
+
   componentDidUpdate(prevProps: { uri: string | null }) {
     const { uri } = this.props;
     if (uri !== prevProps.uri) {
       this.fetch(uri);
     }
   }
+
   async fetch(uri: string | null) {
     try {
       this.setState({ xml: uri ? await fetchText(uri) : null });
@@ -191,6 +207,7 @@ export class SvgFromUri extends Component<UriProps, UriState> {
       console.error(e);
     }
   }
+
   render() {
     const {
       props,
@@ -225,7 +242,7 @@ export function getStyle(string: string): Styles {
 
 export function astToReact(
   value: AST | string,
-  index: number,
+  index: number
 ): JSX.Element | string {
   if (typeof value === 'object') {
     const { Tag, props, children } = value;
@@ -286,12 +303,12 @@ export function parse(source: string, middleware?: Middleware): JsxAST | null {
   let state = metadata;
   let children = null;
   let root: XmlAST | undefined;
-  let stack: XmlAST[] = [];
+  const stack: XmlAST[] = [];
 
   function error(message: string) {
     const { line, column, snippet } = locate(source, i);
     throw new Error(
-      `${message} (${line}:${column}). If this is valid SVG, it's probably a bug. Please raise an issue\n\n${snippet}`,
+      `${message} (${line}:${column}). If this is valid SVG, it's probably a bug. Please raise an issue\n\n${snippet}`
     );
   }
 
@@ -425,7 +442,7 @@ export function parse(source: string, middleware?: Middleware): JsxAST | null {
 
     if (currentElement && tag !== currentElement.tag) {
       error(
-        `Expected closing tag </${tag}> to match opening tag <${currentElement.tag}>`,
+        `Expected closing tag </${tag}> to match opening tag <${currentElement.tag}>`
       );
     }
 

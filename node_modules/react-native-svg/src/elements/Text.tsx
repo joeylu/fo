@@ -1,5 +1,5 @@
 import type { Component, ReactNode } from 'react';
-import React from 'react';
+import * as React from 'react';
 import extractText from '../lib/extract/extractText';
 import extractProps, { propsAndStyles } from '../lib/extract/extractProps';
 import extractTransform from '../lib/extract/extractTransform';
@@ -8,7 +8,6 @@ import type {
   NumberArray,
   NumberProp,
   TextSpecificProps,
-  TransformProps,
 } from '../lib/extract/types';
 import { pickNotNil } from '../lib/util';
 import Shape from './Shape';
@@ -30,10 +29,10 @@ export default class Text extends Shape<TextProps> {
   static displayName = 'Text';
 
   setNativeProps = (
-    props: Object & {
+    props: TextProps & {
       matrix?: ColumnMajorTransformMatrix;
-      style?: [] | {};
-    } & TransformProps,
+      style?: [] | unknown;
+    }
   ) => {
     const matrix = props && !props.matrix && extractTransform(props);
     if (matrix) {
@@ -52,7 +51,7 @@ export default class Text extends Shape<TextProps> {
         x: null,
         y: null,
       },
-      this,
+      this
     );
     Object.assign(props, extractText(prop, true));
     props.ref = this.refMethod as (instance: Component | null) => void;

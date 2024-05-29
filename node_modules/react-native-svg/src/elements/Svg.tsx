@@ -1,5 +1,5 @@
 import type { Component } from 'react';
-import React from 'react';
+import * as React from 'react';
 import type {
   ColorValue,
   MeasureInWindowOnSuccessCallback,
@@ -62,37 +62,29 @@ export default class Svg extends Shape<SvgProps> {
   measureLayout = (
     relativeToNativeNode: number,
     onSuccess: MeasureLayoutOnSuccessCallback,
-    onFail: () => void /* currently unused */,
+    onFail: () => void /* currently unused */
   ) => {
     const { root } = this;
     root && root.measureLayout(relativeToNativeNode, onSuccess, onFail);
   };
 
   setNativeProps = (
-    props: Object & {
-      width?: NumberProp;
-      height?: NumberProp;
+    props: SvgProps & {
       bbWidth?: NumberProp;
       bbHeight?: NumberProp;
-    },
+    }
   ) => {
-    const { width, height } = props;
-    if (width) {
-      props.bbWidth = String(width);
-    }
-    if (height) {
-      props.bbHeight = String(height);
-    }
     const { root } = this;
     root && root.setNativeProps(props);
   };
 
-  toDataURL = (callback: (base64: string) => void, options?: Object) => {
+  toDataURL = (callback: (base64: string) => void, options?: object) => {
     if (!callback) {
       return;
     }
     const handle = findNodeHandle(this.root as Component);
     const RNSVGSvgViewModule: Spec =
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('../fabric/NativeSvgViewModule').default;
     RNSVGSvgViewModule.toDataURL(handle, options, callback);
   };
@@ -170,10 +162,10 @@ export default class Svg extends Shape<SvgProps> {
     props.style = rootStyles.length > 1 ? rootStyles : defaultStyle;
 
     if (width != null) {
-      props.bbWidth = String(width);
+      props.bbWidth = width;
     }
     if (height != null) {
-      props.bbHeight = String(height);
+      props.bbHeight = height;
     }
 
     extractResponder(props, props, this as ResponderInstanceProps);
@@ -203,8 +195,7 @@ export default class Svg extends Shape<SvgProps> {
       <RNSVGSvg
         {...props}
         ref={(ref) => this.refMethod(ref as (Svg & NativeMethods) | null)}
-        {...extractViewBox({ viewBox, preserveAspectRatio })}
-      >
+        {...extractViewBox({ viewBox, preserveAspectRatio })}>
         <G
           {...{
             children,

@@ -19,7 +19,7 @@ const clipRules: { evenodd: number; nonzero: number } = {
   nonzero: 1,
 };
 
-export function propsAndStyles(props: Object & { style?: [] | {} }) {
+export function propsAndStyles(props: object & { style?: [] | unknown }) {
   const { style } = props;
   return !style
     ? props
@@ -54,7 +54,7 @@ export default function extractProps(
     StrokeProps &
     FillProps &
     ClipProps,
-  ref: Object,
+  ref: object
 ) {
   const {
     id,
@@ -122,7 +122,7 @@ export default function extractProps(
       console.warn(
         'Invalid `clipPath` prop, expected a clipPath like "#id", but got: "' +
           clipPath +
-          '"',
+          '"'
       );
     }
   }
@@ -136,7 +136,7 @@ export default function extractProps(
       console.warn(
         'Invalid `mask` prop, expected a mask like "#id", but got: "' +
           mask +
-          '"',
+          '"'
       );
     }
   }
@@ -144,30 +144,16 @@ export default function extractProps(
   return extracted;
 }
 
-export function extract(instance: Object, props: Object & { style?: [] | {} }) {
+export function extract(
+  instance: object,
+  props: object & { style?: [] | unknown }
+) {
   return extractProps(propsAndStyles(props), instance);
 }
 
-export function stringifyPropsForFabric(props: {
-  [key: string]: NumberProp | undefined | null;
-}) {
-  const extracted: { [key: string]: NumberProp } = {};
-  Object.keys(props).forEach((k) => {
-    const prop = props[k];
-    if (prop !== undefined && prop !== null) {
-      const propStr = prop as string;
-      const propNum = parseInt(propStr, 10);
-      const doNotParse = isNaN(propNum) || propStr[propStr.length - 1] === '%';
-      extracted[k] = doNotParse ? propStr : propNum;
-    }
-  });
-
-  return extracted;
-}
-
 export function withoutXY(
-  instance: Object,
-  props: Object & { style?: [] | {} },
+  instance: object,
+  props: object & { style?: [] | unknown }
 ) {
   return extractProps({ ...propsAndStyles(props), x: null, y: null }, instance);
 }

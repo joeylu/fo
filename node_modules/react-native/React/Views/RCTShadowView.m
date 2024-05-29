@@ -50,7 +50,7 @@ typedef NS_ENUM(unsigned int, meta_prop_t) {
   dispatch_once(&onceToken, ^{
     yogaConfig = YGConfigNew();
     YGConfigSetPointScaleFactor(yogaConfig, RCTScreenScale());
-    YGConfigSetUseLegacyStretchBehaviour(yogaConfig, true);
+    YGConfigSetErrata(yogaConfig, YGErrataAll);
   });
   return yogaConfig;
 }
@@ -59,12 +59,6 @@ typedef NS_ENUM(unsigned int, meta_prop_t) {
 @synthesize rootTag = _rootTag;
 
 // YogaNode API
-
-static void RCTPrint(YGNodeRef node)
-{
-  RCTShadowView *shadowView = (__bridge RCTShadowView *)YGNodeGetContext(node);
-  printf("%s(%lld), ", shadowView.viewName.UTF8String, (long long)shadowView.reactTag.integerValue);
-}
 
 #define RCT_SET_YGVALUE(ygvalue, setter, ...)      \
   switch (ygvalue.unit) {                          \
@@ -203,7 +197,6 @@ static void RCTProcessMetaPropsBorder(const YGValue metaProps[META_PROP_COUNT], 
 
     _yogaNode = YGNodeNewWithConfig([[self class] yogaConfig]);
     YGNodeSetContext(_yogaNode, (__bridge void *)self);
-    YGNodeSetPrintFunc(_yogaNode, RCTPrint);
   }
   return self;
 }
@@ -304,7 +297,7 @@ static void RCTProcessMetaPropsBorder(const YGValue metaProps[META_PROP_COUNT], 
 {
   if (!RCTLayoutMetricsEqualToLayoutMetrics(self.layoutMetrics, layoutMetrics)) {
     self.layoutMetrics = layoutMetrics;
-    [layoutContext.affectedShadowViews addObject:self];
+    [layoutContext.affectedShadowViews addPointer:((__bridge void *)self)];
   }
 }
 
@@ -365,6 +358,13 @@ static void RCTProcessMetaPropsBorder(const YGValue metaProps[META_PROP_COUNT], 
   YGNodeRemoveChild(constraintYogaNode, clonedYogaNode);
   YGNodeFree(constraintYogaNode);
   YGNodeFree(clonedYogaNode);
+
+  // `setOwner()` for children unlinked by `YGNodeFree()`
+  int childCount = YGNodeGetChildCount(self.yogaNode);
+  for (int i = 0; i < childCount; i++) {
+    YGNodeRef child = YGNodeGetChild(self.yogaNode, i);
+    YGNodeSwapChild(self.yogaNode, child, i);
+  }
 
   return measuredSize;
 }
@@ -568,7 +568,7 @@ RCT_POSITION_PROPERTY(End, end, YGEdgeEnd)
 // IntrinsicContentSize
 
 static inline YGSize
-RCTShadowViewMeasure(YGNodeRef node, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
+RCTShadowViewMeasure(YGNodeConstRef node, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
 {
   RCTShadowView *shadowView = (__bridge RCTShadowView *)YGNodeGetContext(node);
 

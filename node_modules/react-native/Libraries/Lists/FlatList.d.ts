@@ -12,6 +12,7 @@ import type {
   ListRenderItem,
   ViewToken,
   VirtualizedListProps,
+  ViewabilityConfig,
 } from '@react-native/virtualized-lists';
 import type {ScrollViewComponent} from '../Components/ScrollView/ScrollView';
 import type {StyleProp} from '../StyleSheet/StyleSheet';
@@ -115,8 +116,8 @@ export interface FlatListProps<ItemT> extends VirtualizedListProps<ItemT> {
    */
   onViewableItemsChanged?:
     | ((info: {
-        viewableItems: Array<ViewToken>;
-        changed: Array<ViewToken>;
+        viewableItems: Array<ViewToken<ItemT>>;
+        changed: Array<ViewToken<ItemT>>;
       }) => void)
     | null
     | undefined;
@@ -144,7 +145,7 @@ export interface FlatListProps<ItemT> extends VirtualizedListProps<ItemT> {
   /**
    * See `ViewabilityHelper` for flow type and further documentation.
    */
-  viewabilityConfig?: any | undefined;
+  viewabilityConfig?: ViewabilityConfig | undefined;
 
   /**
    * Note: may have bugs (missing content) in some circumstances - use at your own risk.
